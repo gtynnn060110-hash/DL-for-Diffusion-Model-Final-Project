@@ -38,4 +38,15 @@
 *   **3D 可视化**：集成 `Plotly 3D` 组件。用户可在网页端通过滑块自由移动障碍物的 $(x, y, z)$ 坐标，后端实时响应并渲染出动态避障的三维空间轨迹。
 
 ## 6. 当前进展
-1. 文献调研：[Flow Straight and Fast: Learning to Generate and Edit Data with Rectified Flow](http://arxiv.org/abs/2209.03003) 和 [Universal Guidance for Diffusion Models](https://arxiv.org/abs/2302.07121).
+1. 文献调研：[Flow Straight and Fast: Learning to Generate and Edit Data with Rectified Flow](http://arxiv.org/abs/2209.03003) 和 [Universal Guidance for Diffusion Models](https://arxiv.org/abs/2302.07121).  
+第一篇文章核心：
+![overview](./background_information/fig1.png)
+![main figure](./background_information/fig2.png)  
+![main alg](./background_information/fig3.png)
+第二篇文章核心：
+待补全。
+2. 复现第一篇文章工作
+    1. dataset构建完成，参考[data_generator.py](./data_generator.py) 和 [visualize_trajectories.py](./visualize_trajectories.py)
+    2. 复现[rectified flow](http://arxiv.org/abs/2209.03003)的主训练算法，参考[recflow.py](./recflow.py).  
+        其中的调用文件链路是：[model.py](./model.py)为模型架构定义，[train.py](./train.py)为训练过程代码。  
+        目前做好了初版demo，更精细的调参还没做。最终200轮训练之后，loss大概在0.36左右。
