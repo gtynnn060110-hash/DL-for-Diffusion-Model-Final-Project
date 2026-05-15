@@ -3,6 +3,7 @@ import numpy as np
 from pathlib import Path
 
 default_num_trajectories = 50
+default_obstacle_radius = 1.0
 
 def cubic_bezier(p0, p1, p2, p3, t):
     t = t.reshape(-1, 1)
@@ -30,7 +31,28 @@ def sample_control_points(rng, min_clearance):
 
     return p1, p2
 
-def generate_trajectories_data(num_trajectories, seq_len, min_clearance, seed):
+def is_collision_free(trajectory, obstacle_radius):
+    distances = np.linalg.norm(trajectory, axis=1)
+    return bool(np.all(distances > obstacle_radius))
+
+
+def generate_trajectories_data(
+    num_trajectories,
+    seq_len,
+    min_clearance,
+    obstacle_radius,
+    seed,
+    max_attempts_per_trajectory=200,
+):
+    if num_trajectories <= 0:
+        raise ValueError("num_trajectories must be positive.")
+    if seq_len <= 1:
+        raise ValueError("seq_len must be greater than 1.")
+    if obstacle_radius < 0.0:
+        raise ValueError("obstacle_radius must be non-negative.")
+    if max_attempts_per_trajectory <= 0:
+        raise ValueError("max_attempts_per_trajectory must be positive.")
+
     rng = np.random.default_rng(seed)
     t_vals = np.linspace(0.0, 1.0, seq_len, dtype=np.float32)
 
@@ -38,11 +60,22 @@ def generate_trajectories_data(num_trajectories, seq_len, min_clearance, seed):
     p3 = np.array([5.0, 0.0, 0.0], dtype=np.float32)
 
     trajectories = np.zeros((num_trajectories, seq_len, 3), dtype=np.float32)
+    rejected = 0
     for i in range(num_trajectories):
-        p1, p2 = sample_control_points(rng, min_clearance)
-        trajectories[i] = cubic_bezier(p0, p1, p2, p3, t_vals)
+        for _ in range(max_attempts_per_trajectory):
+            p1, p2 = sample_control_points(rng, min_clearance)
+            trajectory = cubic_bezier(p0, p1, p2, p3, t_vals)
+            if is_collision_free(trajectory, obstacle_radius):
+                trajectories[i] = trajectory
+                break
+            rejected += 1
+        else:
+            raise RuntimeError(
+                "Failed to generate a collision-free trajectory. "
+                "Try reducing obstacle_radius or min_clearance, or increase max_attempts_per_trajectory."
+            )
 
-    return trajectories
+    return trajectories, rejected
 
 def create_3d_plot(trajectories, obstacle_radius):
     import plotly.graph_objects as go
@@ -85,23 +118,43 @@ def create_3d_plot(trajectories, obstacle_radius):
     return fig
 
 CURRENT_DATA = None
+CURRENT_GENERATION_INFO = {}
 
 def update_plot(num, seq_len, min_clearance, obstacle_radius, seed):
-    global CURRENT_DATA
+    global CURRENT_DATA, CURRENT_GENERATION_INFO
     # 生成数据
-    CURRENT_DATA = generate_trajectories_data(int(num), int(seq_len), min_clearance, int(seed))
+    CURRENT_DATA, rejected = generate_trajectories_data(
+        num_trajectories=int(num),
+        seq_len=int(seq_len),
+        min_clearance=min_clearance,
+        obstacle_radius=obstacle_radius,
+        seed=int(seed),
+    )
+    CURRENT_GENERATION_INFO = {
+        "rejected": rejected,
+        "obstacle_radius": obstacle_radius,
+    }
     # 渲染图表
     fig = create_3d_plot(CURRENT_DATA, obstacle_radius)
-    return fig, f"当前轨迹形状: {CURRENT_DATA.shape}"
+    return (
+        fig,
+        "当前轨迹形状: "
+        f"{CURRENT_DATA.shape} | 障碍物半径: {obstacle_radius:.2f} | "
+        f"碰撞过滤丢弃候选轨迹数: {rejected}",
+    )
 
 def save_data(output_path):
-    global CURRENT_DATA
+    global CURRENT_DATA, CURRENT_GENERATION_INFO
     if CURRENT_DATA is None:
         return "请先生成数据！"
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     np.save(path, CURRENT_DATA)
-    return f"成功保存 {CURRENT_DATA.shape} 形状的数据至: {output_path}"
+    rejected = CURRENT_GENERATION_INFO.get("rejected", 0)
+    return (
+        f"成功保存 {CURRENT_DATA.shape} 形状的数据至: {output_path}。"
+        f" 本次生成共过滤掉 {rejected} 条碰撞候选轨迹。"
+    )
 
 def build_demo():
     import gradio as gr
@@ -145,7 +198,14 @@ def parse_args():
     parser.add_argument("--num-trajectories", type=int, default=default_num_trajectories, help="生成轨迹数量 N")
     parser.add_argument("--seq-len", type=int, default=50, help="轨迹序列长度 T")
     parser.add_argument("--min-clearance", type=float, default=1.5, help="轨迹最小避让距离")
+    parser.add_argument("--obstacle-radius", type=float, default=default_obstacle_radius, help="中心球形障碍物半径")
     parser.add_argument("--seed", type=int, default=42, help="随机种子")
+    parser.add_argument(
+        "--max-attempts-per-trajectory",
+        type=int,
+        default=200,
+        help="每条轨迹最多重采样次数，用于碰撞过滤",
+    )
     parser.add_argument("--output-path", type=str, default="dataset/toy_trajectories.npy", help="生成模式保存路径")
     return parser.parse_args()
 
@@ -154,14 +214,19 @@ if __name__ == "__main__":
     if args.visualize:
         build_demo().launch(inbrowser=True)
     else:
-        default_no_visualize_trajectories = 5000
-        trajectories = generate_trajectories_data(
-            num_trajectories=default_no_visualize_trajectories,
+        trajectories, rejected = generate_trajectories_data(
+            num_trajectories=args.num_trajectories,
             seq_len=args.seq_len,
             min_clearance=args.min_clearance,
+            obstacle_radius=args.obstacle_radius,
             seed=args.seed,
+            max_attempts_per_trajectory=args.max_attempts_per_trajectory,
         )
         output_path = Path(args.output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         np.save(output_path, trajectories)
-        print(f"已生成轨迹数据: {trajectories.shape} -> {output_path}")
+        print(
+            f"已生成轨迹数据: {trajectories.shape} -> {output_path} | "
+            f"障碍物半径={args.obstacle_radius:.2f} | "
+            f"碰撞过滤丢弃候选轨迹数={rejected}"
+        )
