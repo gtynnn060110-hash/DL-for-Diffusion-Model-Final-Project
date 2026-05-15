@@ -50,3 +50,26 @@
     2. 复现[rectified flow](http://arxiv.org/abs/2209.03003)的主训练算法，参考[recflow.py](./recflow.py).  
         其中的调用文件链路是：[model.py](./model.py)为模型架构定义，[train.py](./train.py)为训练过程代码。  
         目前做好了初版demo，更精细的调参还没做。最终200轮训练之后，loss大概在0.36左右。
+
+## 7. 推荐运行命令
+建议在项目根目录下按以下顺序运行：
+
+1. 安装依赖
+```bash
+pip install -r requirements.txt
+```
+
+2. 生成带碰撞过滤的训练数据
+```bash
+python data_generator.py --no-visualize --num-trajectories 5000 --obstacle-radius 1.0 --output-path dataset/toy_trajectories.npy
+```
+
+3. 训练 Rectified Flow baseline
+```bash
+python train.py --data-path dataset/toy_trajectories.npy --checkpoint-path checkpoints/rectified_flow_mlp.pt
+```
+
+4. 采样并可视化生成结果
+```bash
+python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy
+```
