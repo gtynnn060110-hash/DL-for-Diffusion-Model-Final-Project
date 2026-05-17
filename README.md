@@ -111,7 +111,7 @@ python train.py --data-path dataset/toy_trajectories.npy --checkpoint-path check
 ### 4. Baseline 推断
 
 ```bash
-python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --save-generated outputs/base.npy --save-fig outputs/base.png --no-show
+python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --save-generated outputs/base_ood.npy --save-fig outputs/base_ood.png --no-show
 ```
 
 ### 5. Energy-Guided 推断
