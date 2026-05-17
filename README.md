@@ -15,12 +15,15 @@
 基础流匹配模型仅能生成拟合训练数据分布的轨迹。在推理阶段若环境中随机出现动态障碍物，原生模型生成的轨迹极易发生“穿模”或碰撞。
 
 ### 3.2 我们的创新：能量引导推理 (Energy-Guided Inference)
-借鉴扩散模型中的分类器引导（Classifier-Guidance）思想，我们在**不重新训练基础流匹配网络**的前提下，在 ODE 推理阶段引入物理排斥势能场。
+借鉴扩散模型中的分类器引导（Classifier-Guidance）思想，我们在**不重新训练基础流匹配网络**的前提下，在 ODE 推理阶段引入物理排斥势能场。当前实现中，`recflow.py` 和 `recflow_guided.py` 使用**同一个训练好的 Rectified Flow 网络**预测速度场 $v_\theta(x_t, t)$，两者的唯一差异在于推理更新公式。
 
-*   **势能函数定义**：定义障碍物排斥场 $E(x)$。
+*   **Baseline 推理**：`recflow.py` 使用标准 Euler 采样：
+    $$ x_{t + \Delta t} = x_t + v_\theta(x_t, t)\Delta t $$
+*   **势能函数定义**：`recflow_guided.py` 为球形障碍物构造软边界排斥势能。仅当轨迹点进入障碍物附近的安全区（障碍物半径 + margin）时，引导项才会生效，从而避免过远距离的无意义干预。
 *   **引导型 ODE 求解**：将基础速度场修改为带有能量梯度的形式：
     $$ \frac{dx_t}{dt} = v_\theta(x_t, t) - \lambda_t \nabla_{x} E(x_t) $$
-*   **动态衰减机制**：设计随时间或距离衰减的斥力系数 $\lambda_t$，确保势能场仅在轨迹接近障碍物时施加强干预，保证轨迹整体的平滑性与运动学合理性。
+*   **动态衰减机制**：当前实现支持 `constant` 和 `linear` 两种时间衰减策略。默认采用线性衰减，使得引导在前期更强、后期更弱，以减少对最终轨迹形状的过度扰动。
+*   **公平对比原则**：Base 与 Guided 版本共享同一个 checkpoint、同一个随机种子、同一个采样步数和同一个可视化流程，差异仅来自是否加入势能引导项。
 
 ## 4. 实验设计与验证
 我们将通过以下严谨的消融实验（Ablation Study）来验证改进的有效性：
@@ -34,8 +37,13 @@
 开发交互式 3D 仿真环境，通过直观的视觉对比，展示 Base 模型（发生碰撞）与 Ours 模型（完美绕行）在面对相同 OOD 障碍物时的行为差异。
 
 ## 5. 项目交付与交互演示 (Demo)
-*   **前端交互**：基于 `Gradio` 构建 Web 界面。
-*   **3D 可视化**：集成 `Plotly 3D` 组件。用户可在网页端通过滑块自由移动障碍物的 $(x, y, z)$ 坐标，后端实时响应并渲染出动态避障的三维空间轨迹。
+当前项目包含两类可视化 / 交互入口：
+
+*   **数据生成交互**：`data_generator.py` 基于 `Gradio + Plotly 3D` 提供专家轨迹交互生成器，可调轨迹数量、障碍物半径、序列长度等参数，并保存 `.npy` 数据集。
+*   **Baseline 推理可视化**：`recflow.py` 使用 `matplotlib` 对比真实轨迹与 Rectified Flow 生成轨迹。
+*   **Guided 推理可视化**：`recflow_guided.py` 在同一模型 checkpoint 上额外加入势能引导，并输出基础避障统计信息，包括 `collision_rate`、`success_rate` 和 `min_distance_to_obstacle`。
+
+说明：当前版本的 `Gradio` 页面仍主要用于数据生成与预览，尚未整合成“网页端实时拖动障碍物并调用训练模型做避障推理”的最终统一 Demo。
 
 ## 6. 当前进展
 1. 文献调研：[Flow Straight and Fast: Learning to Generate and Edit Data with Rectified Flow](http://arxiv.org/abs/2209.03003) 和 [Universal Guidance for Diffusion Models](https://arxiv.org/abs/2302.07121).  
@@ -45,11 +53,28 @@
 ![main alg](./background_information/fig3.png)
 第二篇文章核心：
 待补全。
-2. 复现第一篇文章工作
-    1. dataset构建完成，参考[data_generator.py](./data_generator.py) 和 [visualize_trajectories.py](./visualize_trajectories.py)
-    2. 复现[rectified flow](http://arxiv.org/abs/2209.03003)的主训练算法，参考[recflow.py](./recflow.py).  
-        其中的调用文件链路是：[model.py](./model.py)为模型架构定义，[train.py](./train.py)为训练过程代码。  
-        目前做好了初版demo，更精细的调参还没做。最终200轮训练之后，loss大概在0.36左右。
+
+2. Baseline 复现进展
+    1. 训练数据集构建完成，参考[data_generator.py](./data_generator.py) 和 [visualize_trajectories.py](./visualize_trajectories.py)。
+    2. 已复现[Rectified Flow](http://arxiv.org/abs/2209.03003)的主训练与推理流程。  
+       其中，[model.py](./model.py) 定义模型架构，[train.py](./train.py) 负责训练，[recflow.py](./recflow.py) 负责 baseline 推理与可视化。
+    3. 当前训练脚本已支持 `Adam` 优化器，项目已经具备从数据生成、模型训练到推理展示的闭环。
+
+3. Energy Guidance 原型进展
+    1. 已新增 [recflow_guided.py](./recflow_guided.py)，在**不重新训练模型**的前提下，为同一个 Rectified Flow checkpoint 增加推理期势能引导。
+    2. 当前 guidance 版本支持：
+       * 球形障碍物中心 `--obstacle-center`
+       * 障碍物半径 `--obstacle-radius`
+       * 引导强度 `--guidance-scale`
+       * 安全边界 `--guidance-margin`
+       * 时间衰减策略 `--guidance-decay {constant, linear}`
+       * 引导范数裁剪 `--max-guidance-norm`
+    3. 当前实现重点是构建一个**公平对比的最小原型**：Base 与 Guided 共用同一个神经网络，只在采样公式上不同。
+
+4. 当前仍待完善的部分
+    1. Guidance 在训练内障碍物场景上的提升可能不明显，更适合在 OOD 障碍物位置或半径变化场景下验证。
+    2. 尚未补全系统化评测脚本，例如大规模 success rate、smoothness、inference speed 对比。
+    3. 统一的交互式推理 Demo 和最终答辩展示页面仍待整合。
 
 ## 7. 推荐运行命令
 建议在项目根目录下按以下顺序运行：
@@ -69,7 +94,24 @@ python data_generator.py --no-visualize --num-trajectories 5000 --obstacle-radiu
 python train.py --data-path dataset/toy_trajectories.npy --checkpoint-path checkpoints/rectified_flow_mlp.pt
 ```
 
-4. 采样并可视化生成结果
+4. 采样并可视化 Baseline 生成结果
 ```bash
 python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy
+```
+
+5. 使用同一个模型进行 Energy-Guided 推理
+```bash
+python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy
+```
+
+6. 公平对比 Base 与 Guided（推荐固定相同 seed / steps / num-samples）
+```bash
+python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --save-generated outputs/base.npy --save-fig outputs/base.png --no-show
+
+python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --save-generated outputs/guided.npy --save-fig outputs/guided.png --no-show
+```
+
+7. 在 OOD 障碍物设置下测试 Guidance（更容易观察差异）
+```bash
+python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay constant --max-guidance-norm 10.0
 ```
