@@ -1,0 +1,66 @@
+{
+  "config": {
+    "data_path": "dataset/toy_trajectories.npy",
+    "checkpoint_path": "checkpoints/rectified_flow_mlp.pt",
+    "device": "cpu",
+    "num_samples": 200,
+    "steps": 20,
+    "seed": 42,
+    "guidance_scale": 3.0,
+    "guidance_margin": 2.0,
+    "guidance_decay": "constant",
+    "max_guidance_norm": 10.0
+  },
+  "scenarios": [
+    {
+      "name": "in_distribution_origin",
+      "obstacle_center": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "obstacle_radius": 1.0,
+      "baseline": {
+        "collision_rate": 0.1,
+        "success_rate": 0.9,
+        "min_distance_to_obstacle": 0.12061411887407303,
+        "smoothness": 0.30396509170532227,
+        "path_length": 18.10336685180664,
+        "inference_time_seconds": 0.19523899996420369
+      },
+      "guided": {
+        "collision_rate": 0.015,
+        "success_rate": 0.985,
+        "min_distance_to_obstacle": 0.6177255511283875,
+        "smoothness": 4.49572229385376,
+        "path_length": 53.007667541503906,
+        "inference_time_seconds": 0.11019739997573197
+      }
+    },
+    {
+      "name": "ood_shifted_y",
+      "obstacle_center": [
+        0.0,
+        1.5,
+        0.0
+      ],
+      "obstacle_radius": 1.0,
+      "baseline": {
+        "collision_rate": 0.145,
+        "success_rate": 0.855,
+        "min_distance_to_obstacle": 0.12979301810264587,
+        "smoothness": 0.30396509170532227,
+        "path_length": 18.10336685180664,
+        "inference_time_seconds": 0.05124699999578297
+      },
+      "guided": {
+        "collision_rate": 0.0,
+        "success_rate": 1.0,
+        "min_distance_to_obstacle": 1.455355167388916,
+        "smoothness": 0.5741735696792603,
+        "path_length": 22.374292373657227,
+        "inference_time_seconds": 0.11116160004166886
+      }
+    }
+  ]
+}
