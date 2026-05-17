@@ -26,6 +26,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--save-fig", type=str, default="", help="Optional path to save comparison figure.")
     parser.add_argument("--save-generated", type=str, default="", help="Optional path to save generated trajectories (.npy).")
     parser.add_argument("--no-show", action="store_true", help="Disable interactive figure window.")
+    parser.add_argument(
+        "--obstacle-center",
+        type=float,
+        nargs=3,
+        default=(0.0, 0.0, 0.0),
+        metavar=("X", "Y", "Z"),
+        help="Center of the spherical obstacle for visualization and stats.",
+    )
+    parser.add_argument("--obstacle-radius", type=float, default=1.0, help="Radius of the spherical obstacle.")
     return parser.parse_args()
 
 
@@ -113,7 +122,29 @@ def euler_sample(model: torch.nn.Module, num_samples: int, seq_len: int, point_d
     return z
 
 
-def visualize_comparison(real: np.ndarray, generated: np.ndarray, save_fig: Path | None, no_show: bool) -> None:
+def obstacle_distance_stats(
+    trajectories: np.ndarray,
+    obstacle_center: np.ndarray,
+    obstacle_radius: float,
+) -> tuple[float, float, float]:
+    if trajectories.ndim != 3 or trajectories.shape[-1] != 3:
+        raise ValueError(f"Expected trajectories shape (N, T, 3), got {trajectories.shape}.")
+
+    distances = np.linalg.norm(trajectories - obstacle_center.reshape(1, 1, 3), axis=-1)
+    min_per_trajectory = distances.min(axis=1)
+    collision_rate = float(np.mean(min_per_trajectory <= obstacle_radius))
+    success_rate = 1.0 - collision_rate
+    min_distance = float(min_per_trajectory.min())
+    return collision_rate, success_rate, min_distance
+
+
+def visualize_comparison(
+    real: np.ndarray,
+    generated: np.ndarray,
+    obstacle_center: np.ndarray,
+    save_fig: Path | None,
+    no_show: bool,
+) -> None:
     import matplotlib.pyplot as plt
 
     fig = plt.figure(figsize=(14, 6))
@@ -124,7 +155,10 @@ def visualize_comparison(real: np.ndarray, generated: np.ndarray, save_fig: Path
         ax_real.plot(traj[:, 0], traj[:, 1], traj[:, 2], color="tab:blue", alpha=0.75, linewidth=1.2)
     ax_real.scatter([-5.0], [0.0], [0.0], color="green", s=50, label="start")
     ax_real.scatter([5.0], [0.0], [0.0], color="red", s=50, label="end")
-    ax_real.scatter([0.0], [0.0], [0.0], color="black", s=40, label="obstacle")
+    ax_real.scatter(
+        [obstacle_center[0]], [obstacle_center[1]], [obstacle_center[2]],
+        color="black", s=40, label="obstacle"
+    )
     ax_real.set_title("Real trajectories (X1)")
     ax_real.set_xlabel("x")
     ax_real.set_ylabel("y")
@@ -135,7 +169,10 @@ def visualize_comparison(real: np.ndarray, generated: np.ndarray, save_fig: Path
         ax_gen.plot(traj[:, 0], traj[:, 1], traj[:, 2], color="tab:orange", alpha=0.75, linewidth=1.2)
     ax_gen.scatter([-5.0], [0.0], [0.0], color="green", s=50, label="start")
     ax_gen.scatter([5.0], [0.0], [0.0], color="red", s=50, label="end")
-    ax_gen.scatter([0.0], [0.0], [0.0], color="black", s=40, label="obstacle")
+    ax_gen.scatter(
+        [obstacle_center[0]], [obstacle_center[1]], [obstacle_center[2]],
+        color="black", s=40, label="obstacle"
+    )
     ax_gen.set_title("Generated trajectories (Z1)")
     ax_gen.set_xlabel("x")
     ax_gen.set_ylabel("y")
@@ -160,6 +197,7 @@ def main() -> None:
     point_dim = int(real_all.shape[2])
     count = min(int(args.num_samples), int(real_all.shape[0]))
     real_subset = real_all[:count]
+    obstacle_center_np = np.asarray(args.obstacle_center, dtype=np.float32)
 
     model = load_model_from_checkpoint(
         checkpoint_path=Path(args.checkpoint_path),
@@ -182,10 +220,44 @@ def main() -> None:
         np.save(output, generated)
         print(f"Saved generated trajectories: {generated.shape} -> {output}")
 
+    real_collision, real_success, real_min_distance = obstacle_distance_stats(
+        real_subset,
+        obstacle_center_np,
+        float(args.obstacle_radius),
+    )
+    generated_collision, generated_success, generated_min_distance = obstacle_distance_stats(
+        generated,
+        obstacle_center_np,
+        float(args.obstacle_radius),
+    )
+
     print(f"Device: {device}")
     print(f"Real subset shape: {real_subset.shape}, Generated shape: {generated.shape}")
+    print(
+        "Obstacle: "
+        f"center={tuple(float(x) for x in obstacle_center_np)}, "
+        f"radius={float(args.obstacle_radius):.4f}"
+    )
+    print(
+        "Real obstacle stats: "
+        f"collision_rate={real_collision:.4f}, "
+        f"success_rate={real_success:.4f}, "
+        f"min_distance={real_min_distance:.4f}"
+    )
+    print(
+        "Generated obstacle stats: "
+        f"collision_rate={generated_collision:.4f}, "
+        f"success_rate={generated_success:.4f}, "
+        f"min_distance={generated_min_distance:.4f}"
+    )
     save_fig = Path(args.save_fig) if args.save_fig else None
-    visualize_comparison(real_subset, generated, save_fig=save_fig, no_show=args.no_show)
+    visualize_comparison(
+        real_subset,
+        generated,
+        obstacle_center=obstacle_center_np,
+        save_fig=save_fig,
+        no_show=args.no_show,
+    )
 
 
 if __name__ == "__main__":
