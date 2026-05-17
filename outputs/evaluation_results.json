@@ -26,7 +26,7 @@
         "min_distance_to_obstacle": 0.12061411887407303,
         "smoothness": 0.30396509170532227,
         "path_length": 18.10336685180664,
-        "inference_time_seconds": 0.19523899996420369
+        "inference_time_seconds": 0.1569071999983862
       },
       "guided": {
         "collision_rate": 0.015,
@@ -34,7 +34,7 @@
         "min_distance_to_obstacle": 0.6177255511283875,
         "smoothness": 4.49572229385376,
         "path_length": 53.007667541503906,
-        "inference_time_seconds": 0.11019739997573197
+        "inference_time_seconds": 0.08876399998553097
       }
     },
     {
@@ -51,7 +51,7 @@
         "min_distance_to_obstacle": 0.12979301810264587,
         "smoothness": 0.30396509170532227,
         "path_length": 18.10336685180664,
-        "inference_time_seconds": 0.05124699999578297
+        "inference_time_seconds": 0.057046899979468435
       },
       "guided": {
         "collision_rate": 0.0,
@@ -59,7 +59,7 @@
         "min_distance_to_obstacle": 1.455355167388916,
         "smoothness": 0.5741735696792603,
         "path_length": 22.374292373657227,
-        "inference_time_seconds": 0.11116160004166886
+        "inference_time_seconds": 0.1037159999832511
       }
     }
   ]
