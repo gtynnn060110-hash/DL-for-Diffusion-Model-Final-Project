@@ -6,8 +6,15 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from recflow import euler_sample, load_model_from_checkpoint, load_real_data, set_seed
-from recflow_guided import guided_euler_sample, obstacle_distance_stats
+from flow_sampling import (
+    euler_sample,
+    guided_euler_sample,
+    load_model_from_checkpoint,
+    load_real_data,
+    make_initial_noise,
+    obstacle_distance_stats,
+    set_seed,
+)
 
 
 STANDARD_EXPERIMENT = {
@@ -152,10 +159,9 @@ def sample_baseline(
     seq_len: int,
     point_dim: int,
     steps: int,
-    seed: int,
     device: torch.device,
+    z_init: torch.Tensor,
 ) -> tuple[np.ndarray, float]:
-    set_seed(seed)
     synchronize_if_needed(device)
     start = time.perf_counter()
     generated = euler_sample(
@@ -165,6 +171,7 @@ def sample_baseline(
         point_dim=point_dim,
         steps=steps,
         device=device,
+        z_init=z_init,
     )
     synchronize_if_needed(device)
     elapsed = time.perf_counter() - start
@@ -177,8 +184,8 @@ def sample_guided(
     seq_len: int,
     point_dim: int,
     steps: int,
-    seed: int,
     device: torch.device,
+    z_init: torch.Tensor,
     obstacle_center: np.ndarray,
     obstacle_radius: float,
     guidance_scale: float,
@@ -186,7 +193,6 @@ def sample_guided(
     guidance_decay: str,
     max_guidance_norm: float,
 ) -> tuple[np.ndarray, float]:
-    set_seed(seed)
     obstacle_center_tensor = torch.tensor(obstacle_center, device=device, dtype=torch.float32)
     synchronize_if_needed(device)
     start = time.perf_counter()
@@ -203,6 +209,7 @@ def sample_guided(
         guidance_margin=guidance_margin,
         guidance_decay=guidance_decay,
         max_guidance_norm=max_guidance_norm,
+        z_init=z_init,
     )
     synchronize_if_needed(device)
     elapsed = time.perf_counter() - start
@@ -244,7 +251,7 @@ def format_markdown(results: dict[str, object]) -> str:
             "",
             "- `success_rate` is the primary obstacle-avoidance metric.",
             "- `smoothness` is the mean squared second difference; lower is smoother.",
-            "- Baseline and guided use the same checkpoint, seed, sample count, and integration steps.",
+            "- Baseline and guided use the same checkpoint, seed, sample count, integration steps, and initial noise z0.",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -286,14 +293,17 @@ def main() -> None:
         obstacle_center = np.asarray(scenario["obstacle_center"], dtype=np.float32)
         obstacle_radius = float(scenario["obstacle_radius"])
 
+        set_seed(int(args.seed))
+        z_init = make_initial_noise(num_samples, seq_len, point_dim, device)
+
         baseline, baseline_time = sample_baseline(
             model=model,
             num_samples=num_samples,
             seq_len=seq_len,
             point_dim=point_dim,
             steps=int(args.steps),
-            seed=int(args.seed),
             device=device,
+            z_init=z_init,
         )
         guided, guided_time = sample_guided(
             model=model,
@@ -301,8 +311,8 @@ def main() -> None:
             seq_len=seq_len,
             point_dim=point_dim,
             steps=int(args.steps),
-            seed=int(args.seed),
             device=device,
+            z_init=z_init.clone(),
             obstacle_center=obstacle_center,
             obstacle_radius=obstacle_radius,
             guidance_scale=float(args.guidance_scale),
