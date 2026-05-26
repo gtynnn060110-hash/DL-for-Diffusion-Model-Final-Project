@@ -1,0 +1,202 @@
+"""Shared Rectified Flow sampling and spherical obstacle energy guidance."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import numpy as np
+import torch
+
+from model import build_model
+
+
+def set_seed(seed: int) -> None:
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
+def load_real_data(data_path: Path) -> np.ndarray:
+    if not data_path.exists():
+        raise FileNotFoundError(f"Data file not found: {data_path}")
+    real = np.load(data_path)
+    if real.ndim != 3 or real.shape[-1] != 3:
+        raise ValueError(f"Expected data shape (N, T, 3), got {real.shape}.")
+    if not np.isfinite(real).all():
+        raise ValueError("Dataset contains NaN or Inf values.")
+    return real.astype(np.float32, copy=False)
+
+
+def load_model_from_checkpoint(
+    checkpoint_path: Path,
+    seq_len: int,
+    point_dim: int,
+    device: torch.device,
+) -> torch.nn.Module:
+    if not checkpoint_path.exists():
+        raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}")
+
+    checkpoint = torch.load(checkpoint_path, map_location="cpu")
+    if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
+        state_dict = checkpoint["model_state_dict"]
+        ckpt_args = checkpoint.get("args", {})
+    elif isinstance(checkpoint, dict):
+        state_dict = checkpoint
+        ckpt_args = {}
+    else:
+        raise ValueError("Unsupported checkpoint format.")
+
+    model = build_model(
+        seq_len=seq_len,
+        point_dim=point_dim,
+        hidden_dim=int(ckpt_args.get("hidden_dim", 512)),
+        time_embedding_dim=int(ckpt_args.get("time_embedding_dim", 64)),
+        num_hidden_layers=int(ckpt_args.get("num_hidden_layers", 3)),
+        device=device,
+    )
+    model.load_state_dict(state_dict, strict=True)
+    model.eval()
+    return model
+
+
+def make_initial_noise(
+    num_samples: int,
+    seq_len: int,
+    point_dim: int,
+    device: torch.device,
+    z_init: torch.Tensor | None = None,
+) -> torch.Tensor:
+    """Return initial latent state z_0, optionally from a caller-provided tensor."""
+    expected_shape = (num_samples, seq_len, point_dim)
+    if z_init is None:
+        return torch.randn(expected_shape, device=device, dtype=torch.float32)
+    if tuple(z_init.shape) != expected_shape:
+        raise ValueError(
+            f"z_init must have shape {expected_shape}, got {tuple(z_init.shape)}."
+        )
+    return z_init.to(device=device, dtype=torch.float32).clone()
+
+
+def compute_obstacle_energy_gradient(
+    z: torch.Tensor,
+    obstacle_center: torch.Tensor,
+    obstacle_radius: float,
+    guidance_margin: float,
+    eps: float = 1e-6,
+) -> torch.Tensor:
+    if obstacle_radius < 0.0:
+        raise ValueError("obstacle_radius must be non-negative.")
+    if guidance_margin < 0.0:
+        raise ValueError("guidance_margin must be non-negative.")
+
+    center = obstacle_center.view(1, 1, 3).to(device=z.device, dtype=z.dtype)
+    offset = z - center
+    distance = torch.linalg.norm(offset, dim=-1, keepdim=True).clamp_min(eps)
+    direction = offset / distance
+    active_distance = float(obstacle_radius + guidance_margin)
+    penalty = torch.clamp(active_distance - distance, min=0.0)
+    return -penalty * direction
+
+
+def guidance_strength(t_scalar: float, guidance_scale: float, guidance_decay: str) -> float:
+    if guidance_decay == "constant":
+        return guidance_scale
+    if guidance_decay == "linear":
+        return guidance_scale * (1.0 - t_scalar)
+    raise ValueError(f"Unsupported guidance_decay: {guidance_decay}")
+
+
+def clip_guidance_norm(guidance: torch.Tensor, max_guidance_norm: float) -> torch.Tensor:
+    if max_guidance_norm <= 0.0:
+        return guidance
+    norm = torch.linalg.norm(guidance, dim=-1, keepdim=True).clamp_min(1e-6)
+    return guidance * torch.clamp(max_guidance_norm / norm, max=1.0)
+
+
+@torch.no_grad()
+def euler_sample(
+    model: torch.nn.Module,
+    num_samples: int,
+    seq_len: int,
+    point_dim: int,
+    steps: int,
+    device: torch.device,
+    z_init: torch.Tensor | None = None,
+) -> torch.Tensor:
+    if steps <= 0:
+        raise ValueError("steps must be positive.")
+    if num_samples <= 0:
+        raise ValueError("num_samples must be positive.")
+
+    z = make_initial_noise(num_samples, seq_len, point_dim, device, z_init=z_init)
+    dt = 1.0 / float(steps)
+
+    for i in range(steps):
+        t_scalar = i / float(steps)
+        t = torch.full((num_samples, 1), t_scalar, device=device, dtype=torch.float32)
+        v = model(z, t)
+        z = z + v * dt
+        if not torch.isfinite(z).all():
+            raise RuntimeError(f"Non-finite values encountered during Euler step {i}.")
+    return z
+
+
+@torch.no_grad()
+def guided_euler_sample(
+    model: torch.nn.Module,
+    num_samples: int,
+    seq_len: int,
+    point_dim: int,
+    steps: int,
+    device: torch.device,
+    obstacle_center: torch.Tensor,
+    obstacle_radius: float,
+    guidance_scale: float,
+    guidance_margin: float,
+    guidance_decay: str,
+    max_guidance_norm: float,
+    z_init: torch.Tensor | None = None,
+) -> torch.Tensor:
+    if steps <= 0:
+        raise ValueError("steps must be positive.")
+    if num_samples <= 0:
+        raise ValueError("num_samples must be positive.")
+    if point_dim != 3:
+        raise ValueError("Energy guidance expects 3D trajectory points.")
+
+    z = make_initial_noise(num_samples, seq_len, point_dim, device, z_init=z_init)
+    dt = 1.0 / float(steps)
+
+    for i in range(steps):
+        t_scalar = i / float(steps)
+        t = torch.full((num_samples, 1), t_scalar, device=device, dtype=torch.float32)
+        v = model(z, t)
+        grad_e = compute_obstacle_energy_gradient(
+            z=z,
+            obstacle_center=obstacle_center,
+            obstacle_radius=obstacle_radius,
+            guidance_margin=guidance_margin,
+        )
+        lambda_t = guidance_strength(t_scalar, guidance_scale, guidance_decay)
+        guidance = clip_guidance_norm(lambda_t * grad_e, max_guidance_norm)
+        z = z + (v - guidance) * dt
+        if not torch.isfinite(z).all():
+            raise RuntimeError(f"Non-finite values encountered during guided Euler step {i}.")
+    return z
+
+
+def obstacle_distance_stats(
+    trajectories: np.ndarray,
+    obstacle_center: np.ndarray,
+    obstacle_radius: float,
+) -> tuple[float, float, float]:
+    if trajectories.ndim != 3 or trajectories.shape[-1] != 3:
+        raise ValueError(f"Expected trajectories shape (N, T, 3), got {trajectories.shape}.")
+
+    distances = np.linalg.norm(trajectories - obstacle_center.reshape(1, 1, 3), axis=-1)
+    min_per_trajectory = distances.min(axis=1)
+    collision_rate = float(np.mean(min_per_trajectory <= obstacle_radius))
+    success_rate = 1.0 - collision_rate
+    min_distance = float(min_per_trajectory.min())
+    return collision_rate, success_rate, min_distance
