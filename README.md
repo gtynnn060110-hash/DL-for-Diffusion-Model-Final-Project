@@ -2,7 +2,7 @@
 
 本项目复现 `Rectified Flow` 在三维轨迹生成上的基本流程，并在推断阶段加入 `Energy Guidance`，用于提升新障碍物设置下的避障成功率。
 
-核心思路是：先训练一个从高斯噪声生成平滑轨迹的速度场模型，再在采样时叠加球形障碍物的软排斥势能梯度。`recflow.py` 和 `recflow_guided.py` 使用同一个 checkpoint，区别只在推断更新公式。
+核心思路是：先训练一个从高斯噪声生成平滑轨迹的速度场模型，再在采样时叠加球形障碍物的软排斥势能梯度。`recflow.py` 和 `recflow_guided.py` 使用同一个 checkpoint，区别只在推断更新公式；二者共用 [`flow_sampling.py`](flow_sampling.py) 中的采样实现。
 
 ## 项目结构
 
@@ -11,11 +11,32 @@ data_generator.py         # 生成 3D Bezier 专家轨迹，并用中心球障�
 visualize_trajectories.py # 可视化 .npy 轨迹数据
 model.py                  # Rectified Flow MLP 与时间嵌入
 train.py                  # 训练速度场 v_theta(x_t, t)
-recflow.py                # baseline Euler 推断与可视化
-recflow_guided.py         # Energy-Guided 推断、碰撞统计与可视化
-evaluate.py               # 批量评测 baseline 和 guided
+flow_sampling.py          # 共享：Euler / Guided 采样、势能梯度、障碍统计、checkpoint 加载
+recflow.py                # baseline 推断 CLI 与可视化（调用 flow_sampling）
+recflow_guided.py         # Energy-Guided 推断 CLI 与可视化（调用 flow_sampling）
+evaluate.py               # 批量评测 baseline 和 guided（配对初始噪声 z0）
 DEFENSE_NOTES.md          # 答辩叙事提纲
 ```
+
+## 采样模块（Phase 1）
+
+[`flow_sampling.py`](flow_sampling.py) 集中实现推断期的核心逻辑，避免 `recflow.py` / `recflow_guided.py` / `evaluate.py` 各维护一份采样代码。
+
+主要 API：
+
+| 函数 | 作用 |
+| --- | --- |
+| `make_initial_noise(..., z_init=None)` | 生成或校验初始噪声 `z0` |
+| `euler_sample(..., z_init=None)` | Baseline：`z ← z + v_θ(z,t)·dt` |
+| `guided_euler_sample(..., z_init=None)` | Guided：`z ← z + (v_θ - λ·∇E)·dt` |
+| `compute_obstacle_energy_gradient` | 单球软边界排斥梯度 |
+| `obstacle_distance_stats` | 碰撞率 / 成功率 / 最小距离 |
+| `load_model_from_checkpoint` | 加载训练 checkpoint |
+| `set_seed` / `load_real_data` | 评测与 CLI 共用工具函数 |
+
+**配对采样**：`evaluate.py` 对每个评测场景只采样一次 `z0`，baseline 与 guided 分别传入 `z_init` 与 `z_init.clone()`，保证二者差异仅来自 energy guidance，而非不同随机初值。
+
+后续 Phase 1 步骤（自适应 `distance_gated`、多障碍、随机 OOD 评测）将直接扩展本模块，无需再改 CLI 脚本的积分循环。
 
 ## 方法概览
 
@@ -120,11 +141,13 @@ python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-pat
 python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay constant --max-guidance-norm 10.0 --save-generated outputs/guided_ood.npy --save-fig outputs/guided_ood.png --no-show
 ```
 
-### 6. 批量评测
+### 6. 批量评测（配对 z0）
 
 ```bash
 python evaluate.py --device cpu
 ```
+
+`evaluate.py` 通过 `flow_sampling.make_initial_noise` 为每个场景生成一份 `z0`，baseline 与 guided 共用该初值进行公平对比。
 
 如果 Windows 环境中出现 `libiomp5md.dll already initialized`，可临时使用：
 
@@ -148,6 +171,11 @@ python evaluate.py --device cpu
 ## 局限与下一步
 
 - 当前障碍物只支持球形软边界，尚未支持复杂几何、多障碍或动态障碍物。
-- 当前 guidance 不参与训练，强引导可能带来轨迹变长或平滑性下降。
+- 当前 guidance 不参与训练，强引导可能带来轨迹变长或平滑性下降；Phase 1 后续将加入 `distance_gated` 等自适应引导以缓解 in-distribution 副作用。
 - 当前模型是整段轨迹 MLP，尚未引入更强的序列架构。
-- 后续更合理的方向是把障碍物参数或 SDF 表示作为条件输入，训练 conditional Rectified Flow。
+- 后续更合理的方向是把障碍物参数或 SDF 表示作为条件输入，训练 conditional Rectified Flow（Phase 2）。
+
+### Phase 1 进度
+
+- [x] Step 1–2：`flow_sampling.py` + 脚本瘦身 + `evaluate.py` 配对 `z0`
+- [ ] Step 3–7：自适应引导、多障碍、随机 OOD 评测、消融与文档

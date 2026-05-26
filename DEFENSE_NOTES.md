@@ -22,13 +22,13 @@
    - 当障碍物位置或半径变为 OOD 设置时，baseline 可能生成穿过障碍物的轨迹。
 
 4. **Energy Guidance 改进**
-   - `recflow_guided.py` 使用同一个 checkpoint。
+   - `recflow_guided.py` 使用同一个 checkpoint；采样逻辑集中在 `flow_sampling.py`。
    - 在 Euler 采样阶段加入球形障碍物的软排斥势能梯度。
    - 更新公式从 `x = x + v * dt` 变为 `x = x + (v - guidance) * dt`。
    - 核心优势是无需重训、解释性强、计算开销小。
 
 5. **实验验证**
-   - `evaluate.py` 统一比较 baseline 和 guided。
+   - `evaluate.py` 统一比较 baseline 和 guided；每个场景共用同一份初始噪声 `z0`（配对对比）。
    - 主要指标：`success_rate`、`collision_rate`、`min_distance_to_obstacle`、`smoothness`、推理耗时。
    - 最重要的对比是 OOD 障碍物场景，因为它更能体现推断期 guidance 的价值。
 
@@ -48,4 +48,4 @@
 
 ## 结论表达
 
-当前项目已经形成“数据生成 -> 训练 -> baseline 推断 -> energy-guided 推断 -> 批量评测”的完整闭环。实验重点应放在证明：在同一个模型 checkpoint 下，推断期能量引导可以以较小计算代价改善 OOD 障碍物设置下的避障表现。
+当前项目已经形成“数据生成 -> 训练 -> baseline 推断 -> energy-guided 推断 -> 批量评测”的完整闭环；采样与能量梯度已收敛到 `flow_sampling.py`，便于后续扩展自适应引导与随机 OOD 评测。实验重点应放在证明：在同一个模型 checkpoint 与同一 `z0` 下，推断期能量引导可以以较小计算代价改善 OOD 障碍物设置下的避障表现。

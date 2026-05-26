@@ -34,12 +34,12 @@ Agent 在编写代码时必须严格遵守以下数学定义：
     5.  计算模型预测速度 $v_\theta(X_t, t)$ 与目标速度 $(X_1 - X_0)$ 的 MSE 损失。
     6.  使用 AdamW 优化器反向传播更新参数。
 
-### Phase 4: 推理与可视化 (`recflow.py`)
+### Phase 4: 推理与可视化 (`recflow.py` / `flow_sampling.py`)
 * **核心步骤**:
-    1.  初始化纯高斯噪声 $Z_0$。
-    2.  实现欧拉积分器（Euler Method），设定步数（例如 10 步）。
-    3.  在每一步中，计算 $Z_{t+\Delta t} = Z_t + v_\theta(Z_t, t) \cdot \Delta t$。
-    4.  使用 `matplotlib` 或 `plotly` 将生成的轨迹 $Z_1$ 与训练集中的真实轨迹 $X_1$ 进行 3D 可视化对比。
+    1.  在 `flow_sampling.py` 中实现欧拉积分与（可选）energy-guided 积分；支持显式传入初始噪声 `z_init` 以便配对对比。
+    2.  `recflow.py` / `recflow_guided.py` 仅负责 CLI 与可视化，调用 `flow_sampling`。
+    3.  在每一步中，baseline：`$Z_{t+\Delta t} = Z_t + v_\theta(Z_t, t) \cdot \Delta t$`；guided：`$Z_{t+\Delta t} = Z_t + (v_\theta - \lambda \nabla E) \cdot \Delta t$`。
+    4.  使用 `matplotlib` 将生成的轨迹 $Z_1$ 与训练集中的真实轨迹 $X_1$ 进行 3D 可视化对比。
 
 ## 4. 技术规格要求
 * **Framework**: `PyTorch`
