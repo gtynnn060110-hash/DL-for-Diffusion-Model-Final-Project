@@ -15,6 +15,7 @@ flow_sampling.py          # 共享：Euler / Guided 采样、势能梯度、障�
 recflow.py                # baseline 推断 CLI 与可视化（调用 flow_sampling）
 recflow_guided.py         # Energy-Guided 推断 CLI 与可视化（调用 flow_sampling）
 evaluate.py               # 批量评测 baseline 和 guided（配对初始噪声 z0）
+PROJECT_PROGRESS.md       # 分阶段工作梳理（汇报 / 答辩用）
 DEFENSE_NOTES.md          # 答辩叙事提纲
 ```
 
@@ -166,7 +167,7 @@ python evaluate.py --device cpu
 4. OOD 障碍物实验显示 guided 能显著提高避障成功率。
 5. 当前方法仍是推断期启发式引导，后续可扩展为条件 Flow Matching 或 SDF 条件输入。
 
-更详细的答辩提纲见 `DEFENSE_NOTES.md`。
+更详细的答辩提纲见 `DEFENSE_NOTES.md`；分阶段工作与实验证据见 [`PROJECT_PROGRESS.md`](PROJECT_PROGRESS.md)。
 
 ## 局限与下一步
 
