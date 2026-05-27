@@ -39,7 +39,9 @@ flowchart LR
 | **阶段二**：Energy Guidance | 已完成 | 推断期势能引导 + 批量对比评测 | `recflow_guided.py`, `evaluate.py` |
 | **阶段三**：采样模块化与公平评测 | 已完成 | `flow_sampling.py`、配对 `z0`、`evaluate` 更新 | `flow_sampling.py`, `evaluate.py` |
 | Phase 1 Step 3 | 已完成 | `distance_gated` 自适应引导 + 三方法统一评估 | `flow_sampling.py`, `evaluate.py`, `recflow_guided.py` |
-| Phase 1 后续 | 进行中 | 多障碍、随机 OOD、消融 | 见文末「待办」 |
+| Phase 1 Step 4 | 已完成 | 多障碍势能叠加 + 双球夹缝 demo | `flow_sampling.py`, `evaluate.py`, `recflow_guided.py` |
+| Phase 1 Step 5 | 已完成 | 随机 OOD 场景评估 + 均值汇总 | `evaluate.py` |
+| Phase 1 后续 | 进行中 | 消融 | 见文末「待办」 |
 | Phase 2 | 未开始 | 条件化 Rectified Flow | `train_conditional.py`（计划） |
 
 ---
@@ -238,13 +240,100 @@ python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --d
 
 ---
 
+## 阶段五：多障碍扩展（Phase 1 Step 4）
+
+### 要解决的问题
+
+- 单球障碍只能验证最简单的避障泛化，不能说明 guidance 是否可以扩展到多个障碍物。
+- 后续随机 OOD 和更复杂场景需要统一的多障碍梯度叠加与碰撞统计接口。
+
+### 实现内容
+
+| 变更 | 说明 |
+|------|------|
+| 多障碍梯度 | `flow_sampling.py` 支持多个球形障碍物的能量梯度叠加 |
+| 多障碍门控 | `distance_gated` 对多个障碍取最大距离门控，靠近任一障碍时增强排斥 |
+| 多障碍统计 | `obstacle_distance_stats` 支持 `(M, 3)` 障碍中心与 `(M,)` 半径；任一障碍碰撞即失败 |
+| Guided CLI | `recflow_guided.py` 新增可重复的 `--obstacle X Y Z R`，并兼容旧的 `--obstacle-center/--obstacle-radius` |
+| 双障碍评估 | `evaluate.py` 默认加入 `ood_double_gap` 场景，同时评估 baseline、constant、distance_gated |
+
+### 实验证据（200 样本）
+
+| 场景 | 方法 | 成功率 | 碰撞率 | 最小距离 | 平滑度↓ | 路径长度↓ |
+|------|------|------:|------:|------:|------:|------:|
+| OOD 双障碍 | baseline | 0.6150 | 0.3850 | 0.0978 | 0.3040 | 18.1034 |
+| OOD 双障碍 | guided_constant | **0.9700** | **0.0300** | **0.8078** | 4.7778 | 52.0974 |
+| OOD 双障碍 | guided_distance_gated | 0.9300 | 0.0700 | 0.6662 | **1.8873** | **34.2087** |
+
+### 结论
+
+- 多障碍势能叠加在双球夹缝场景中显著提升成功率，说明推断期 guidance 可以从单障碍自然扩展到多障碍。
+- `guided_constant` 成功率最高，但路径和平滑度代价更大；`guided_distance_gated` 成功率仍远高于 baseline，同时路径更短、更平滑。
+- 新增示意图：`outputs/guided_distance_gated_double_ood.png`。
+- 双障碍图组：
+  - `outputs/base_double_ood.png`
+  - `outputs/guided_constant_double_ood.png`
+  - `outputs/guided_distance_gated_double_ood.png`
+
+### 常用命令
+
+```powershell
+$env:KMP_DUPLICATE_LIB_OK='TRUE'
+python evaluate.py --device cpu
+python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle 0 1.5 0 1.0 --obstacle 0 -1.5 0 1.0 --save-fig outputs/base_double_ood.png --no-show
+python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle 0 1.5 0 1.0 --obstacle 0 -1.5 0 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay constant --max-guidance-norm 10.0 --save-fig outputs/guided_constant_double_ood.png --no-show
+python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle 0 1.5 0 1.0 --obstacle 0 -1.5 0 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay distance_gated --max-guidance-norm 10.0 --save-fig outputs/guided_distance_gated_double_ood.png --no-show
+```
+
+---
+
+## 阶段六：随机 OOD 评估（Phase 1 Step 5）
+
+### 要解决的问题
+
+- 固定 OOD 点和双障碍 demo 仍然是少量手工场景，不能充分说明方法对不同障碍位置的稳定性。
+- 需要用随机障碍分布评估 baseline、`guided_constant` 与 `guided_distance_gated` 的平均表现。
+
+### 实现内容
+
+| 变更 | 说明 |
+|------|------|
+| 随机场景生成 | `evaluate.py` 新增 `--random-ood-count N`，追加 N 个随机单障碍 OOD 场景 |
+| 可控采样范围 | 支持 `--random-ood-y-range`、`--random-ood-z-range`、`--random-ood-radius-range` |
+| 排除近原点样本 | `--random-ood-min-center-norm` 避免随机障碍过于接近训练内原点障碍 |
+| 汇总输出 | Markdown 与 JSON 中加入 `random_ood_summary`，统计随机场景均值 |
+
+### 实验证据（20 个随机 OOD 场景，200 样本）
+
+采样配置：`y ∈ [-2.5, 2.5]`，`z ∈ [-1.5, 1.5]`，`radius ∈ [0.8, 1.2]`，`min_center_norm = 1.0`。
+
+| 方法 | 成功率 | 碰撞率 | 最小距离 | 平滑度↓ | 路径长度↓ |
+|------|------:|------:|------:|------:|------:|
+| baseline | 0.8732 | 0.1267 | 0.1680 | 0.3040 | 18.1034 |
+| guided_constant | **0.9995** | **0.0005** | **1.6380** | 0.6269 | 22.4427 |
+| guided_distance_gated | 0.9975 | 0.0025 | 1.1977 | **0.4895** | **20.6685** |
+
+### 结论
+
+- 随机 OOD 结果说明 Energy Guidance 的提升不是只对固定 `(0, 1.5, 0)` 场景有效。
+- `guided_constant` 仍给出最高成功率和最小碰撞率；`guided_distance_gated` 成功率非常接近，同时保持更低平滑度代价和更短路径。
+- 主结果已合并到 `outputs/evaluation_results.json` 与 `outputs/evaluation_summary.md`。
+
+### 常用命令
+
+```powershell
+python evaluate.py --device cpu --random-ood-count 20
+```
+
+---
+
 ## 当前仓库结构（推断相关）
 
 ```text
-flow_sampling.py    # 采样、能量梯度与 distance_gated 自适应引导
+flow_sampling.py    # 采样、多障碍能量梯度与 distance_gated 自适应引导
 recflow.py          # Baseline CLI 与 OOD 图生成
-recflow_guided.py   # Guided CLI，支持 constant / distance_gated
-evaluate.py         # 批量评测（配对 z0，统一输出三方法对比）
+recflow_guided.py   # Guided CLI，支持 constant / distance_gated 与多障碍输入
+evaluate.py         # 批量评测（配对 z0，统一输出三方法、多障碍和随机 OOD 对比）
 train.py            # 训练（未改）
 ```
 
@@ -275,8 +364,8 @@ train.py            # 训练（未改）
 ### Phase 1（推断期方法深化）
 
 - [x] **Step 3**：`distance_gated` 自适应引导
-- [ ] **Step 4**：多障碍物势能叠加 + 双球夹缝 demo
-- [ ] **Step 6**：`eval_random_obstacles.py` 随机障碍分布评测
+- [x] **Step 4**：多障碍物势能叠加 + 双球夹缝 demo
+- [x] **Step 6**：`evaluate.py --random-ood-count` 随机障碍分布评测
 - [ ] **Step 7**：`ablate_guidance.py` + Pareto 图；README 主表与 200 样本结果对齐
 
 ### Phase 2（训练期创新）
@@ -308,5 +397,7 @@ train.py            # 训练（未改）
 | 2026-05 | 阶段二：`recflow_guided` + `evaluate.py` + OOD 对比实验 |
 | 2026-05 | 阶段三：`flow_sampling.py`、配对 `z0`、文档同步 |
 | 2026-05 | 阶段四：`distance_gated` 自适应引导、三方法统一评估、OOD 轨迹图更新 |
+| 2026-05 | 阶段五：多障碍势能叠加、`ood_double_gap` 评估、双障碍轨迹图 |
+| 2026-05 | 阶段六：随机 OOD 场景评估与均值汇总 |
 
 *后续完成多障碍、随机 OOD 或消融实验时，请继续追加「实现 / 证据 / 结论」，并更新本表。*

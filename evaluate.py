@@ -84,6 +84,42 @@ def parse_args() -> argparse.Namespace:
             "Example: --scenario shifted 0 1.5 0 1"
         ),
     )
+    parser.add_argument(
+        "--random-ood-count",
+        type=int,
+        default=0,
+        help="Number of random single-obstacle OOD scenarios to append.",
+    )
+    parser.add_argument(
+        "--random-ood-y-range",
+        type=float,
+        nargs=2,
+        default=(-2.5, 2.5),
+        metavar=("MIN", "MAX"),
+        help="Sampling range for random obstacle y coordinates.",
+    )
+    parser.add_argument(
+        "--random-ood-z-range",
+        type=float,
+        nargs=2,
+        default=(-1.5, 1.5),
+        metavar=("MIN", "MAX"),
+        help="Sampling range for random obstacle z coordinates.",
+    )
+    parser.add_argument(
+        "--random-ood-radius-range",
+        type=float,
+        nargs=2,
+        default=(0.8, 1.2),
+        metavar=("MIN", "MAX"),
+        help="Sampling range for random obstacle radii.",
+    )
+    parser.add_argument(
+        "--random-ood-min-center-norm",
+        type=float,
+        default=1.0,
+        help="Reject random obstacle centers closer than this distance to the training obstacle center.",
+    )
     parser.add_argument("--output-json", type=str, default="outputs/evaluation_results.json")
     parser.add_argument("--output-markdown", type=str, default="outputs/evaluation_summary.md")
     return parser.parse_args()
@@ -154,6 +190,64 @@ def parse_scenarios(raw_scenarios: list[list[str]] | None) -> list[dict[str, obj
                 "name": name,
                 "obstacles": [((float(cx), float(cy), float(cz)), float(radius))],
             }
+        )
+    return scenarios
+
+
+def validate_range(name: str, values: tuple[float, float] | list[float]) -> tuple[float, float]:
+    lower, upper = float(values[0]), float(values[1])
+    if lower > upper:
+        raise ValueError(f"{name} lower bound must be <= upper bound.")
+    return lower, upper
+
+
+def generate_random_ood_scenarios(
+    count: int,
+    seed: int,
+    y_range: tuple[float, float] | list[float],
+    z_range: tuple[float, float] | list[float],
+    radius_range: tuple[float, float] | list[float],
+    min_center_norm: float,
+) -> list[dict[str, object]]:
+    if count < 0:
+        raise ValueError("random_ood_count must be non-negative.")
+    if count == 0:
+        return []
+    y_min, y_max = validate_range("random_ood_y_range", y_range)
+    z_min, z_max = validate_range("random_ood_z_range", z_range)
+    r_min, r_max = validate_range("random_ood_radius_range", radius_range)
+    if r_min < 0.0:
+        raise ValueError("random obstacle radii must be non-negative.")
+    if min_center_norm < 0.0:
+        raise ValueError("random_ood_min_center_norm must be non-negative.")
+
+    rng = np.random.default_rng(seed)
+    scenarios = []
+    attempts = 0
+    max_attempts = max(1000, count * 100)
+    while len(scenarios) < count and attempts < max_attempts:
+        attempts += 1
+        center = np.array(
+            [
+                0.0,
+                rng.uniform(y_min, y_max),
+                rng.uniform(z_min, z_max),
+            ],
+            dtype=np.float32,
+        )
+        if np.linalg.norm(center) < min_center_norm:
+            continue
+        radius = float(rng.uniform(r_min, r_max))
+        scenarios.append(
+            {
+                "name": f"random_ood_{len(scenarios):03d}",
+                "obstacles": [(tuple(float(v) for v in center), radius)],
+                "random_ood": True,
+            }
+        )
+    if len(scenarios) != count:
+        raise RuntimeError(
+            f"Only sampled {len(scenarios)} random OOD scenarios after {max_attempts} attempts."
         )
     return scenarios
 
@@ -270,6 +364,24 @@ def format_markdown(results: dict[str, object]) -> str:
                     time=metrics["inference_time_seconds"],
                 )
             )
+    random_summary = results.get("random_ood_summary", {})
+    if random_summary:
+        lines.extend(["", "## Random OOD Summary", ""])
+        lines.append("| Method | Success Rate | Collision Rate | Min Distance | Smoothness | Path Length | Time (s) |")
+        lines.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: |")
+        for method, metrics in random_summary.items():
+            lines.append(
+                "| {method} | {success:.4f} | {collision:.4f} | {min_dist:.4f} | "
+                "{smoothness:.4f} | {path_length:.4f} | {time:.4f} |".format(
+                    method=method,
+                    success=metrics["success_rate"],
+                    collision=metrics["collision_rate"],
+                    min_dist=metrics["min_distance_to_obstacle"],
+                    smoothness=metrics["smoothness"],
+                    path_length=metrics["path_length"],
+                    time=metrics["inference_time_seconds"],
+                )
+            )
     lines.extend(
         [
             "",
@@ -291,6 +403,15 @@ def main() -> None:
     point_dim = int(real_all.shape[2])
     num_samples = min(int(args.num_samples), int(real_all.shape[0]))
     scenarios = parse_scenarios(args.scenario)
+    random_scenarios = generate_random_ood_scenarios(
+        count=int(args.random_ood_count),
+        seed=int(args.seed) + 10_000,
+        y_range=args.random_ood_y_range,
+        z_range=args.random_ood_z_range,
+        radius_range=args.random_ood_radius_range,
+        min_center_norm=float(args.random_ood_min_center_norm),
+    )
+    scenarios.extend(random_scenarios)
     guidance_decays = tuple(args.guidance_decay or STANDARD_EXPERIMENT["guidance_decays"])
 
     model = load_model_from_checkpoint(
@@ -312,6 +433,11 @@ def main() -> None:
             "guidance_margin": float(args.guidance_margin),
             "guidance_decays": list(guidance_decays),
             "max_guidance_norm": float(args.max_guidance_norm),
+            "random_ood_count": int(args.random_ood_count),
+            "random_ood_y_range": [float(v) for v in args.random_ood_y_range],
+            "random_ood_z_range": [float(v) for v in args.random_ood_z_range],
+            "random_ood_radius_range": [float(v) for v in args.random_ood_radius_range],
+            "random_ood_min_center_norm": float(args.random_ood_min_center_norm),
         },
         "scenarios": [],
     }
@@ -370,6 +496,30 @@ def main() -> None:
             scenario_result[method_name] = guided_metrics
 
         results["scenarios"].append(scenario_result)
+
+    if random_scenarios:
+        random_names = {str(scenario["name"]) for scenario in random_scenarios}
+        methods = results["scenarios"][0]["methods"] if results["scenarios"] else []
+        random_summary: dict[str, dict[str, float]] = {}
+        random_results = [
+            scenario
+            for scenario in results["scenarios"]
+            if str(scenario["name"]) in random_names
+        ]
+        for method in methods:
+            method_metrics = [scenario[method] for scenario in random_results]
+            random_summary[method] = {
+                key: float(np.mean([metrics[key] for metrics in method_metrics]))
+                for key in (
+                    "collision_rate",
+                    "success_rate",
+                    "min_distance_to_obstacle",
+                    "smoothness",
+                    "path_length",
+                    "inference_time_seconds",
+                )
+            }
+        results["random_ood_summary"] = random_summary
 
     json_path = Path(args.output_json)
     markdown_path = Path(args.output_markdown)
