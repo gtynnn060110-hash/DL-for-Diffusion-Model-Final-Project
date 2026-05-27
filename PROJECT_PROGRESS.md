@@ -7,7 +7,7 @@
 
 ## 一句话定位
 
-在 3D 轨迹生成任务上复现 **Rectified Flow**，并在**不重新训练**的前提下，用推断期 **Energy Guidance** 提升**新障碍物（OOD）**场景下的避障成功率；当前正推进工程化采样模块与更严格的公平评测协议。
+在 3D 轨迹生成任务上复现 **Rectified Flow**，并在**不重新训练**的前提下，用推断期 **Energy Guidance** 提升**新障碍物（OOD）**场景下的避障成功率；当前已完成工程化采样、公平评测协议与 `distance_gated` 自适应引导。
 
 ---
 
@@ -38,7 +38,8 @@ flowchart LR
 | **阶段一**：Baseline 框架 | 已完成 | 数据 → 训练 → 推断 → 可视化闭环 | `data_generator.py`, `model.py`, `train.py`, `recflow.py` |
 | **阶段二**：Energy Guidance | 已完成 | 推断期势能引导 + 批量对比评测 | `recflow_guided.py`, `evaluate.py` |
 | **阶段三**：采样模块化与公平评测 | 已完成 | `flow_sampling.py`、配对 `z0`、`evaluate` 更新 | `flow_sampling.py`, `evaluate.py` |
-| Phase 1 后续 | 进行中 | 自适应引导、随机 OOD、消融 | 见文末「待办」 |
+| Phase 1 Step 3 | 已完成 | `distance_gated` 自适应引导 + 三方法统一评估 | `flow_sampling.py`, `evaluate.py`, `recflow_guided.py` |
+| Phase 1 后续 | 进行中 | 多障碍、随机 OOD、消融 | 见文末「待办」 |
 | Phase 2 | 未开始 | 条件化 Rectified Flow | `train_conditional.py`（计划） |
 
 ---
@@ -124,7 +125,7 @@ z ← z + (v_theta(z, t) - lambda_t * grad_E(z)) * dt
 ### 产出物索引
 
 - 指标：`outputs/evaluation_summary.md`、`outputs/evaluation_results.json`
-- 示意图：`outputs/base_ood.png`、`outputs/guided_ood.png`
+- 示意图：`outputs/base_ood.png`、`outputs/guided_constant_ood.png`、`outputs/guided_distance_gated_ood.png`
 
 ---
 
@@ -166,9 +167,9 @@ z ← z + (v_theta(z, t) - lambda_t * grad_E(z)) * dt
 
 ### 结论
 
-- 工程上形成**单一采样真源**，后续 Step 3（自适应引导）只改 `flow_sampling.py` 即可。
+- 工程上形成**单一采样真源**，后续 Step 3（自适应引导）可以集中修改 `flow_sampling.py`。
 - 评测协议可辩护：**控制变量为 guidance 项**。
-- ID 下 guided 副作用仍然存在 → 引出下一阶段 **distance_gated / penalty_scaled**。
+- ID 下 guided 副作用仍然存在 → 阶段四已用 **distance_gated** 进行缓解。
 
 ### 常用命令
 
@@ -179,13 +180,71 @@ python evaluate.py --device cpu --num-samples 200
 
 ---
 
+## 阶段四：自适应 Guidance（Phase 1 Step 3）
+
+### 要解决的问题
+
+- `constant` guidance 在 OOD 场景中能显著提升避障成功率，但在 ID 场景下容易过度修正，表现为路径变长、平滑度下降。
+- 希望在不重新训练模型的前提下，让 guidance 更集中地作用于靠近障碍物的轨迹点，减少远离障碍区域的副作用。
+
+### 实现内容
+
+| 变更 | 说明 |
+|------|------|
+| 新增 `distance_gated` | 在 `flow_sampling.py` 中对障碍距离计算 0–1 门控，越靠近障碍排斥越强，远离障碍逐渐减弱 |
+| 收窄 guidance 选项 | 移除 `linear`，当前只保留 `constant` 与 `distance_gated` 两种可解释配置 |
+| 更新 CLI | `recflow_guided.py` 与 `evaluate.py` 均支持 `--guidance-decay {constant,distance_gated}` |
+| 合并评估输出 | `evaluate.py` 一次运行同时输出 `baseline`、`guided_constant`、`guided_distance_gated` |
+| 清理输出目录 | `outputs/` 保留统一评估结果与三张 OOD 轨迹图 |
+
+### 回归验证
+
+- `python -m py_compile data_generator.py model.py train.py flow_sampling.py recflow.py recflow_guided.py evaluate.py visualize_trajectories.py check_sampling_regression.py`
+- `python check_sampling_regression.py --device cpu`
+- `guidance_scale=0` 时，guided 与 baseline 仍完全一致（max diff = 0）。
+- `python evaluate.py --device cpu` 使用现有 checkpoint 重新跑通 200 样本统一评估。
+
+### 实验证据（200 样本）
+
+| 场景 | 方法 | 成功率 | 碰撞率 | 最小距离 | 平滑度↓ | 路径长度↓ |
+|------|------|------:|------:|------:|------:|------:|
+| ID 原点 | baseline | 0.9000 | 0.1000 | 0.1206 | 0.3040 | 18.1034 |
+| ID 原点 | guided_constant | 0.9850 | 0.0150 | 0.6177 | 4.4957 | 53.0077 |
+| ID 原点 | guided_distance_gated | **0.9950** | **0.0050** | **0.7542** | 2.0130 | 36.9326 |
+| OOD (0,1.5,0) | baseline | 0.8550 | 0.1450 | 0.1298 | 0.3040 | 18.1034 |
+| OOD (0,1.5,0) | guided_constant | **1.0000** | **0.0000** | **1.4554** | 0.5742 | 22.3743 |
+| OOD (0,1.5,0) | guided_distance_gated | 0.9950 | 0.0050 | 0.9945 | **0.4701** | **20.5781** |
+
+### 结论
+
+- `distance_gated` 在 OOD 场景下仍显著优于 baseline，同时比 `constant` guidance 更平滑、路径更短。
+- 在 ID 场景中，`distance_gated` 保持高成功率，并明显缓解 `constant` guidance 的过度修正问题。
+- 当前输出统一为：
+  - `outputs/evaluation_results.json`
+  - `outputs/evaluation_summary.md`
+  - `outputs/base_ood.png`
+  - `outputs/guided_constant_ood.png`
+  - `outputs/guided_distance_gated_ood.png`
+
+### 常用命令
+
+```powershell
+$env:KMP_DUPLICATE_LIB_OK='TRUE'
+python evaluate.py --device cpu
+python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --save-fig outputs/base_ood.png --no-show
+python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay constant --max-guidance-norm 10.0 --save-fig outputs/guided_constant_ood.png --no-show
+python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay distance_gated --max-guidance-norm 10.0 --save-fig outputs/guided_distance_gated_ood.png --no-show
+```
+
+---
+
 ## 当前仓库结构（推断相关）
 
 ```text
-flow_sampling.py    # 采样与能量梯度（核心实现）
-recflow.py          # Baseline CLI
-recflow_guided.py   # Guided CLI
-evaluate.py         # 批量评测（配对 z0）
+flow_sampling.py    # 采样、能量梯度与 distance_gated 自适应引导
+recflow.py          # Baseline CLI 与 OOD 图生成
+recflow_guided.py   # Guided CLI，支持 constant / distance_gated
+evaluate.py         # 批量评测（配对 z0，统一输出三方法对比）
 train.py            # 训练（未改）
 ```
 
@@ -195,7 +254,7 @@ train.py            # 训练（未改）
 
 1. **我们复现了什么**：Rectified Flow 在 3D 轨迹上的完整 pipeline（阶段一）。
 2. **我们的创新点是什么**：推断期 Energy Guidance，OOD 避障显著提升（阶段二）。
-3. **我们如何保证对比可信**：模块化采样 + 配对 `z0`（阶段三）；下一步用自适应引导缓解 ID 副作用。
+3. **我们如何保证对比可信**：模块化采样 + 配对 `z0`（阶段三）；`distance_gated` 自适应引导进一步缓解 ID 副作用。
 
 ---
 
@@ -215,7 +274,7 @@ train.py            # 训练（未改）
 
 ### Phase 1（推断期方法深化）
 
-- [ ] **Step 3**：`distance_gated` / `penalty_scaled` 自适应引导
+- [x] **Step 3**：`distance_gated` 自适应引导
 - [ ] **Step 4**：多障碍物势能叠加 + 双球夹缝 demo
 - [ ] **Step 6**：`eval_random_obstacles.py` 随机障碍分布评测
 - [ ] **Step 7**：`ablate_guidance.py` + Pareto 图；README 主表与 200 样本结果对齐
@@ -248,5 +307,6 @@ train.py            # 训练（未改）
 | 2026-05 | 阶段一：Baseline 框架与训练推断闭环 |
 | 2026-05 | 阶段二：`recflow_guided` + `evaluate.py` + OOD 对比实验 |
 | 2026-05 | 阶段三：`flow_sampling.py`、配对 `z0`、文档同步 |
+| 2026-05 | 阶段四：`distance_gated` 自适应引导、三方法统一评估、OOD 轨迹图更新 |
 
-*请在完成 Step 3 及以后工作时，在对应阶段小节追加「实现 / 证据 / 结论」，并更新本表。*
+*后续完成多障碍、随机 OOD 或消融实验时，请继续追加「实现 / 证据 / 结论」，并更新本表。*
