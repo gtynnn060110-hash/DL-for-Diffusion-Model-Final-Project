@@ -17,12 +17,16 @@
   "scenarios": [
     {
       "name": "in_distribution_origin",
-      "obstacle_center": [
-        0.0,
-        0.0,
-        0.0
+      "obstacles": [
+        {
+          "center": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radius": 1.0
+        }
       ],
-      "obstacle_radius": 1.0,
       "methods": [
         "baseline",
         "guided_constant",
@@ -34,7 +38,7 @@
         "min_distance_to_obstacle": 0.12061411887407303,
         "smoothness": 0.30396509170532227,
         "path_length": 18.10336685180664,
-        "inference_time_seconds": 0.09038409986533225
+        "inference_time_seconds": 0.07622799999080598
       },
       "guided_constant": {
         "collision_rate": 0.015,
@@ -42,7 +46,7 @@
         "min_distance_to_obstacle": 0.6177255511283875,
         "smoothness": 4.49572229385376,
         "path_length": 53.007667541503906,
-        "inference_time_seconds": 0.09269839990884066
+        "inference_time_seconds": 0.0784756001085043
       },
       "guided_distance_gated": {
         "collision_rate": 0.005,
@@ -50,17 +54,21 @@
         "min_distance_to_obstacle": 0.7542079091072083,
         "smoothness": 2.012977123260498,
         "path_length": 36.93256759643555,
-        "inference_time_seconds": 0.10071779997088015
+        "inference_time_seconds": 0.10675329994410276
       }
     },
     {
       "name": "ood_shifted_y",
-      "obstacle_center": [
-        0.0,
-        1.5,
-        0.0
+      "obstacles": [
+        {
+          "center": [
+            0.0,
+            1.5,
+            0.0
+          ],
+          "radius": 1.0
+        }
       ],
-      "obstacle_radius": 1.0,
       "methods": [
         "baseline",
         "guided_constant",
@@ -72,7 +80,7 @@
         "min_distance_to_obstacle": 0.12979301810264587,
         "smoothness": 0.30396509170532227,
         "path_length": 18.10336685180664,
-        "inference_time_seconds": 0.05922750011086464
+        "inference_time_seconds": 0.04855029983446002
       },
       "guided_constant": {
         "collision_rate": 0.0,
@@ -80,7 +88,7 @@
         "min_distance_to_obstacle": 1.455355167388916,
         "smoothness": 0.5741735696792603,
         "path_length": 22.374292373657227,
-        "inference_time_seconds": 0.09386079991236329
+        "inference_time_seconds": 0.0755559999961406
       },
       "guided_distance_gated": {
         "collision_rate": 0.005,
@@ -88,7 +96,57 @@
         "min_distance_to_obstacle": 0.9945327043533325,
         "smoothness": 0.4700961410999298,
         "path_length": 20.578115463256836,
-        "inference_time_seconds": 0.12277800007723272
+        "inference_time_seconds": 0.09591979999095201
+      }
+    },
+    {
+      "name": "ood_double_gap",
+      "obstacles": [
+        {
+          "center": [
+            0.0,
+            1.5,
+            0.0
+          ],
+          "radius": 1.0
+        },
+        {
+          "center": [
+            0.0,
+            -1.5,
+            0.0
+          ],
+          "radius": 1.0
+        }
+      ],
+      "methods": [
+        "baseline",
+        "guided_constant",
+        "guided_distance_gated"
+      ],
+      "baseline": {
+        "collision_rate": 0.385,
+        "success_rate": 0.615,
+        "min_distance_to_obstacle": 0.09779446572065353,
+        "smoothness": 0.30396509170532227,
+        "path_length": 18.10336685180664,
+        "inference_time_seconds": 0.0441771000623703
+      },
+      "guided_constant": {
+        "collision_rate": 0.03,
+        "success_rate": 0.97,
+        "min_distance_to_obstacle": 0.8078494668006897,
+        "smoothness": 4.777803421020508,
+        "path_length": 52.09743118286133,
+        "inference_time_seconds": 0.10073100007139146
+      },
+      "guided_distance_gated": {
+        "collision_rate": 0.07,
+        "success_rate": 0.9299999999999999,
+        "min_distance_to_obstacle": 0.6661980748176575,
+        "smoothness": 1.8872954845428467,
+        "path_length": 34.20872116088867,
+        "inference_time_seconds": 0.12382450001314282
       }
     }
   ]
