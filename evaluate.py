@@ -32,13 +32,15 @@ STANDARD_EXPERIMENT = {
 DEFAULT_SCENARIOS = (
     {
         "name": "in_distribution_origin",
-        "obstacle_center": (0.0, 0.0, 0.0),
-        "obstacle_radius": 1.0,
+        "obstacles": [((0.0, 0.0, 0.0), 1.0)],
     },
     {
         "name": "ood_shifted_y",
-        "obstacle_center": (0.0, 1.5, 0.0),
-        "obstacle_radius": 1.0,
+        "obstacles": [((0.0, 1.5, 0.0), 1.0)],
+    },
+    {
+        "name": "ood_double_gap",
+        "obstacles": [((0.0, 1.5, 0.0), 1.0), ((0.0, -1.5, 0.0), 1.0)],
     },
 )
 
@@ -124,13 +126,13 @@ def trajectory_path_length(trajectories: np.ndarray) -> float:
 
 def evaluate_trajectories(
     trajectories: np.ndarray,
-    obstacle_center: np.ndarray,
-    obstacle_radius: float,
+    obstacle_centers: np.ndarray,
+    obstacle_radii: np.ndarray,
 ) -> dict[str, float]:
     collision_rate, success_rate, min_distance = obstacle_distance_stats(
         trajectories=trajectories,
-        obstacle_center=obstacle_center,
-        obstacle_radius=obstacle_radius,
+        obstacle_center=obstacle_centers,
+        obstacle_radius=obstacle_radii,
     )
     return {
         "collision_rate": collision_rate,
@@ -150,11 +152,28 @@ def parse_scenarios(raw_scenarios: list[list[str]] | None) -> list[dict[str, obj
         scenarios.append(
             {
                 "name": name,
-                "obstacle_center": (float(cx), float(cy), float(cz)),
-                "obstacle_radius": float(radius),
+                "obstacles": [((float(cx), float(cy), float(cz)), float(radius))],
             }
         )
     return scenarios
+
+
+def unpack_obstacles(scenario: dict[str, object]) -> tuple[np.ndarray, np.ndarray]:
+    obstacles = scenario.get("obstacles")
+    if obstacles is None:
+        center = scenario["obstacle_center"]
+        radius = scenario["obstacle_radius"]
+        return (
+            np.asarray(center, dtype=np.float32).reshape(1, 3),
+            np.asarray([radius], dtype=np.float32),
+        )
+
+    centers = []
+    radii = []
+    for center, radius in obstacles:
+        centers.append(center)
+        radii.append(radius)
+    return np.asarray(centers, dtype=np.float32), np.asarray(radii, dtype=np.float32)
 
 
 def sample_baseline(
@@ -190,14 +209,15 @@ def sample_guided(
     steps: int,
     device: torch.device,
     z_init: torch.Tensor,
-    obstacle_center: np.ndarray,
-    obstacle_radius: float,
+    obstacle_centers: np.ndarray,
+    obstacle_radii: np.ndarray,
     guidance_scale: float,
     guidance_margin: float,
     guidance_decay: str,
     max_guidance_norm: float,
 ) -> tuple[np.ndarray, float]:
-    obstacle_center_tensor = torch.tensor(obstacle_center, device=device, dtype=torch.float32)
+    obstacle_centers_tensor = torch.tensor(obstacle_centers, device=device, dtype=torch.float32)
+    obstacle_radii_tensor = torch.tensor(obstacle_radii, device=device, dtype=torch.float32)
     synchronize_if_needed(device)
     start = time.perf_counter()
     generated = guided_euler_sample(
@@ -207,13 +227,15 @@ def sample_guided(
         point_dim=point_dim,
         steps=steps,
         device=device,
-        obstacle_center=obstacle_center_tensor,
-        obstacle_radius=obstacle_radius,
+        obstacle_center=obstacle_centers_tensor[0],
+        obstacle_radius=float(obstacle_radii_tensor[0].item()),
         guidance_scale=guidance_scale,
         guidance_margin=guidance_margin,
         guidance_decay=guidance_decay,
         max_guidance_norm=max_guidance_norm,
         z_init=z_init,
+        obstacle_centers=obstacle_centers_tensor,
+        obstacle_radii=obstacle_radii_tensor,
     )
     synchronize_if_needed(device)
     elapsed = time.perf_counter() - start
@@ -295,8 +317,7 @@ def main() -> None:
     }
 
     for scenario in scenarios:
-        obstacle_center = np.asarray(scenario["obstacle_center"], dtype=np.float32)
-        obstacle_radius = float(scenario["obstacle_radius"])
+        obstacle_centers, obstacle_radii = unpack_obstacles(scenario)
 
         set_seed(int(args.seed))
         z_init = make_initial_noise(num_samples, seq_len, point_dim, device)
@@ -310,13 +331,18 @@ def main() -> None:
             device=device,
             z_init=z_init,
         )
-        baseline_metrics = evaluate_trajectories(baseline, obstacle_center, obstacle_radius)
+        baseline_metrics = evaluate_trajectories(baseline, obstacle_centers, obstacle_radii)
         baseline_metrics["inference_time_seconds"] = baseline_time
 
         scenario_result: dict[str, object] = {
             "name": str(scenario["name"]),
-            "obstacle_center": obstacle_center.tolist(),
-            "obstacle_radius": obstacle_radius,
+            "obstacles": [
+                {
+                    "center": center.tolist(),
+                    "radius": float(radius),
+                }
+                for center, radius in zip(obstacle_centers, obstacle_radii)
+            ],
             "methods": ["baseline"],
             "baseline": baseline_metrics,
         }
@@ -330,14 +356,14 @@ def main() -> None:
                 steps=int(args.steps),
                 device=device,
                 z_init=z_init.clone(),
-                obstacle_center=obstacle_center,
-                obstacle_radius=obstacle_radius,
+                obstacle_centers=obstacle_centers,
+                obstacle_radii=obstacle_radii,
                 guidance_scale=float(args.guidance_scale),
                 guidance_margin=float(args.guidance_margin),
                 guidance_decay=str(guidance_decay),
                 max_guidance_norm=float(args.max_guidance_norm),
             )
-            guided_metrics = evaluate_trajectories(guided, obstacle_center, obstacle_radius)
+            guided_metrics = evaluate_trajectories(guided, obstacle_centers, obstacle_radii)
             guided_metrics["inference_time_seconds"] = guided_time
             method_name = f"guided_{guidance_decay}"
             scenario_result["methods"].append(method_name)

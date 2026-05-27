@@ -99,6 +99,32 @@ def compute_obstacle_energy_gradient(
     return -penalty * direction
 
 
+def compute_multi_obstacle_energy_gradient(
+    z: torch.Tensor,
+    obstacle_centers: torch.Tensor,
+    obstacle_radii: torch.Tensor,
+    guidance_margin: float,
+) -> torch.Tensor:
+    centers = obstacle_centers.to(device=z.device, dtype=z.dtype)
+    radii = obstacle_radii.to(device=z.device, dtype=z.dtype).flatten()
+    if centers.ndim != 2 or centers.shape[-1] != 3:
+        raise ValueError(f"obstacle_centers must have shape (M, 3), got {tuple(centers.shape)}.")
+    if radii.ndim != 1 or radii.shape[0] != centers.shape[0]:
+        raise ValueError("obstacle_radii must have shape (M,) and match obstacle_centers.")
+    if centers.shape[0] <= 0:
+        raise ValueError("At least one obstacle is required.")
+
+    total = torch.zeros_like(z)
+    for center, radius in zip(centers, radii):
+        total = total + compute_obstacle_energy_gradient(
+            z=z,
+            obstacle_center=center,
+            obstacle_radius=float(radius.item()),
+            guidance_margin=guidance_margin,
+        )
+    return total
+
+
 def compute_obstacle_distance_gate(
     z: torch.Tensor,
     obstacle_center: torch.Tensor,
@@ -118,6 +144,34 @@ def compute_obstacle_distance_gate(
         return (signed_clearance <= 0.0).to(dtype=z.dtype)
     gate = 1.0 - torch.clamp(signed_clearance / float(guidance_margin), min=0.0, max=1.0)
     return gate
+
+
+def compute_multi_obstacle_distance_gate(
+    z: torch.Tensor,
+    obstacle_centers: torch.Tensor,
+    obstacle_radii: torch.Tensor,
+    guidance_margin: float,
+) -> torch.Tensor:
+    centers = obstacle_centers.to(device=z.device, dtype=z.dtype)
+    radii = obstacle_radii.to(device=z.device, dtype=z.dtype).flatten()
+    if centers.ndim != 2 or centers.shape[-1] != 3:
+        raise ValueError(f"obstacle_centers must have shape (M, 3), got {tuple(centers.shape)}.")
+    if radii.ndim != 1 or radii.shape[0] != centers.shape[0]:
+        raise ValueError("obstacle_radii must have shape (M,) and match obstacle_centers.")
+    if centers.shape[0] <= 0:
+        raise ValueError("At least one obstacle is required.")
+
+    gates = []
+    for center, radius in zip(centers, radii):
+        gates.append(
+            compute_obstacle_distance_gate(
+                z=z,
+                obstacle_center=center,
+                obstacle_radius=float(radius.item()),
+                guidance_margin=guidance_margin,
+            )
+        )
+    return torch.stack(gates, dim=0).amax(dim=0)
 
 
 def guidance_strength(t_scalar: float, guidance_scale: float, guidance_decay: str) -> float:
@@ -176,6 +230,8 @@ def guided_euler_sample(
     guidance_decay: str,
     max_guidance_norm: float,
     z_init: torch.Tensor | None = None,
+    obstacle_centers: torch.Tensor | None = None,
+    obstacle_radii: torch.Tensor | None = None,
 ) -> torch.Tensor:
     if steps <= 0:
         raise ValueError("steps must be positive.")
@@ -186,22 +242,32 @@ def guided_euler_sample(
 
     z = make_initial_noise(num_samples, seq_len, point_dim, device, z_init=z_init)
     dt = 1.0 / float(steps)
+    centers = (
+        obstacle_center.view(1, 3)
+        if obstacle_centers is None
+        else obstacle_centers.to(device=device, dtype=torch.float32)
+    )
+    radii = (
+        torch.tensor([obstacle_radius], device=device, dtype=torch.float32)
+        if obstacle_radii is None
+        else obstacle_radii.to(device=device, dtype=torch.float32).flatten()
+    )
 
     for i in range(steps):
         t_scalar = i / float(steps)
         t = torch.full((num_samples, 1), t_scalar, device=device, dtype=torch.float32)
         v = model(z, t)
-        grad_e = compute_obstacle_energy_gradient(
+        grad_e = compute_multi_obstacle_energy_gradient(
             z=z,
-            obstacle_center=obstacle_center,
-            obstacle_radius=obstacle_radius,
+            obstacle_centers=centers,
+            obstacle_radii=radii,
             guidance_margin=guidance_margin,
         )
         if guidance_decay == "distance_gated":
-            gate = compute_obstacle_distance_gate(
+            gate = compute_multi_obstacle_distance_gate(
                 z=z,
-                obstacle_center=obstacle_center,
-                obstacle_radius=obstacle_radius,
+                obstacle_centers=centers,
+                obstacle_radii=radii,
                 guidance_margin=guidance_margin,
             )
             grad_e = grad_e * gate
@@ -216,14 +282,27 @@ def guided_euler_sample(
 def obstacle_distance_stats(
     trajectories: np.ndarray,
     obstacle_center: np.ndarray,
-    obstacle_radius: float,
+    obstacle_radius: float | np.ndarray,
 ) -> tuple[float, float, float]:
     if trajectories.ndim != 3 or trajectories.shape[-1] != 3:
         raise ValueError(f"Expected trajectories shape (N, T, 3), got {trajectories.shape}.")
 
-    distances = np.linalg.norm(trajectories - obstacle_center.reshape(1, 1, 3), axis=-1)
-    min_per_trajectory = distances.min(axis=1)
-    collision_rate = float(np.mean(min_per_trajectory <= obstacle_radius))
+    centers = np.asarray(obstacle_center, dtype=np.float32)
+    if centers.ndim == 1:
+        centers = centers.reshape(1, 3)
+    if centers.ndim != 2 or centers.shape[-1] != 3:
+        raise ValueError(f"Expected obstacle centers shape (3,) or (M, 3), got {centers.shape}.")
+    radii = np.asarray(obstacle_radius, dtype=np.float32).reshape(-1)
+    if radii.size == 1:
+        radii = np.repeat(radii, centers.shape[0])
+    if radii.shape[0] != centers.shape[0]:
+        raise ValueError("obstacle_radius must be scalar or match the number of centers.")
+
+    distances = np.linalg.norm(trajectories[:, :, None, :] - centers.reshape(1, 1, -1, 3), axis=-1)
+    min_per_obstacle = distances.min(axis=1)
+    collision_per_trajectory = np.any(min_per_obstacle <= radii.reshape(1, -1), axis=1)
+    min_per_trajectory = min_per_obstacle.min(axis=1)
+    collision_rate = float(np.mean(collision_per_trajectory))
     success_rate = 1.0 - collision_rate
     min_distance = float(min_per_trajectory.min())
     return collision_rate, success_rate, min_distance

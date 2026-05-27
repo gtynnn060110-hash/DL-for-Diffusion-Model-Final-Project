@@ -42,6 +42,17 @@ def parse_args() -> argparse.Namespace:
         help="Center of the spherical obstacle.",
     )
     parser.add_argument("--obstacle-radius", type=float, default=1.0, help="Radius of the spherical obstacle.")
+    parser.add_argument(
+        "--obstacle",
+        action="append",
+        nargs=4,
+        type=float,
+        metavar=("X", "Y", "Z", "R"),
+        help=(
+            "Spherical obstacle as X Y Z R. Can be repeated. "
+            "When provided, overrides --obstacle-center/--obstacle-radius."
+        ),
+    )
     parser.add_argument("--guidance-scale", type=float, default=1.0, help="Strength of the obstacle repulsion.")
     parser.add_argument(
         "--guidance-margin",
@@ -65,6 +76,19 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def resolve_obstacles(args: argparse.Namespace) -> tuple[np.ndarray, np.ndarray]:
+    if args.obstacle:
+        obstacle_array = np.asarray(args.obstacle, dtype=np.float32)
+        centers = obstacle_array[:, :3]
+        radii = obstacle_array[:, 3]
+    else:
+        centers = np.asarray(args.obstacle_center, dtype=np.float32).reshape(1, 3)
+        radii = np.asarray([args.obstacle_radius], dtype=np.float32)
+    if np.any(radii < 0.0):
+        raise ValueError("Obstacle radii must be non-negative.")
+    return centers, radii
+
+
 def resolve_device(device_arg: str) -> torch.device:
     if device_arg == "auto":
         return get_default_device()
@@ -82,7 +106,7 @@ def resolve_device(device_arg: str) -> torch.device:
 def visualize_comparison(
     real: np.ndarray,
     generated: np.ndarray,
-    obstacle_center: np.ndarray,
+    obstacle_centers: np.ndarray,
     save_fig: Path | None,
     no_show: bool,
 ) -> None:
@@ -97,7 +121,7 @@ def visualize_comparison(
     ax_real.scatter([-5.0], [0.0], [0.0], color="green", s=50, label="start")
     ax_real.scatter([5.0], [0.0], [0.0], color="red", s=50, label="end")
     ax_real.scatter(
-        [obstacle_center[0]], [obstacle_center[1]], [obstacle_center[2]],
+        obstacle_centers[:, 0], obstacle_centers[:, 1], obstacle_centers[:, 2],
         color="black", s=40, label="obstacle"
     )
     ax_real.set_title("Real trajectories (X1)")
@@ -111,7 +135,7 @@ def visualize_comparison(
     ax_gen.scatter([-5.0], [0.0], [0.0], color="green", s=50, label="start")
     ax_gen.scatter([5.0], [0.0], [0.0], color="red", s=50, label="end")
     ax_gen.scatter(
-        [obstacle_center[0]], [obstacle_center[1]], [obstacle_center[2]],
+        obstacle_centers[:, 0], obstacle_centers[:, 1], obstacle_centers[:, 2],
         color="black", s=40, label="obstacle"
     )
     ax_gen.set_title("Energy-guided generated trajectories (Z1)")
@@ -139,8 +163,9 @@ def main() -> None:
     count = min(int(args.num_samples), int(real_all.shape[0]))
     real_subset = real_all[:count]
 
-    obstacle_center_np = np.asarray(args.obstacle_center, dtype=np.float32)
-    obstacle_center = torch.tensor(obstacle_center_np, device=device, dtype=torch.float32)
+    obstacle_centers_np, obstacle_radii_np = resolve_obstacles(args)
+    obstacle_centers = torch.tensor(obstacle_centers_np, device=device, dtype=torch.float32)
+    obstacle_radii = torch.tensor(obstacle_radii_np, device=device, dtype=torch.float32)
 
     model = load_model_from_checkpoint(
         checkpoint_path=Path(args.checkpoint_path),
@@ -155,12 +180,14 @@ def main() -> None:
         point_dim=point_dim,
         steps=int(args.steps),
         device=device,
-        obstacle_center=obstacle_center,
-        obstacle_radius=float(args.obstacle_radius),
+        obstacle_center=obstacle_centers[0],
+        obstacle_radius=float(obstacle_radii[0].item()),
         guidance_scale=float(args.guidance_scale),
         guidance_margin=float(args.guidance_margin),
         guidance_decay=str(args.guidance_decay),
         max_guidance_norm=float(args.max_guidance_norm),
+        obstacle_centers=obstacle_centers,
+        obstacle_radii=obstacle_radii,
     ).detach().cpu().numpy().astype(np.float32)
 
     if args.save_generated:
@@ -171,21 +198,20 @@ def main() -> None:
 
     real_collision, real_success, real_min_distance = obstacle_distance_stats(
         real_subset,
-        obstacle_center_np,
-        float(args.obstacle_radius),
+        obstacle_centers_np,
+        obstacle_radii_np,
     )
     generated_collision, generated_success, generated_min_distance = obstacle_distance_stats(
         generated,
-        obstacle_center_np,
-        float(args.obstacle_radius),
+        obstacle_centers_np,
+        obstacle_radii_np,
     )
 
     print(f"Device: {device}")
     print(f"Real subset shape: {real_subset.shape}, Generated shape: {generated.shape}")
     print(
         "Guidance: "
-        f"center={tuple(float(x) for x in obstacle_center_np)}, "
-        f"radius={float(args.obstacle_radius):.4f}, "
+        f"obstacles={[(tuple(float(v) for v in center), float(radius)) for center, radius in zip(obstacle_centers_np, obstacle_radii_np)]}, "
         f"scale={float(args.guidance_scale):.4f}, "
         f"margin={float(args.guidance_margin):.4f}, "
         f"decay={args.guidance_decay}, "
@@ -207,7 +233,7 @@ def main() -> None:
     visualize_comparison(
         real_subset,
         generated,
-        obstacle_center=obstacle_center_np,
+        obstacle_centers=obstacle_centers_np,
         save_fig=save_fig,
         no_show=args.no_show,
     )
