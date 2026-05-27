@@ -25,7 +25,7 @@ STANDARD_EXPERIMENT = {
     "seed": 42,
     "guidance_scale": 3.0,
     "guidance_margin": 2.0,
-    "guidance_decay": "constant",
+    "guidance_decays": ("constant", "distance_gated"),
     "max_guidance_norm": 10.0,
 }
 
@@ -64,8 +64,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--guidance-decay",
         type=str,
-        default=STANDARD_EXPERIMENT["guidance_decay"],
-        choices=["constant", "linear"],
+        action="append",
+        choices=["constant", "distance_gated"],
+        help=(
+            "Guidance mode to evaluate. Can be repeated. "
+            "Defaults to constant and distance_gated."
+        ),
     )
     parser.add_argument("--max-guidance-norm", type=float, default=STANDARD_EXPERIMENT["max_guidance_norm"])
     parser.add_argument(
@@ -229,7 +233,7 @@ def format_markdown(results: dict[str, object]) -> str:
     lines.append("| Scenario | Method | Success Rate | Collision Rate | Min Distance | Smoothness | Path Length | Time (s) |")
     lines.append("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |")
     for scenario in results["scenarios"]:
-        for method in ("baseline", "guided"):
+        for method in scenario["methods"]:
             metrics = scenario[method]
             lines.append(
                 "| {scenario} | {method} | {success:.4f} | {collision:.4f} | {min_dist:.4f} | "
@@ -265,6 +269,7 @@ def main() -> None:
     point_dim = int(real_all.shape[2])
     num_samples = min(int(args.num_samples), int(real_all.shape[0]))
     scenarios = parse_scenarios(args.scenario)
+    guidance_decays = tuple(args.guidance_decay or STANDARD_EXPERIMENT["guidance_decays"])
 
     model = load_model_from_checkpoint(
         checkpoint_path=Path(args.checkpoint_path),
@@ -283,7 +288,7 @@ def main() -> None:
             "seed": int(args.seed),
             "guidance_scale": float(args.guidance_scale),
             "guidance_margin": float(args.guidance_margin),
-            "guidance_decay": args.guidance_decay,
+            "guidance_decays": list(guidance_decays),
             "max_guidance_norm": float(args.max_guidance_norm),
         },
         "scenarios": [],
@@ -305,36 +310,40 @@ def main() -> None:
             device=device,
             z_init=z_init,
         )
-        guided, guided_time = sample_guided(
-            model=model,
-            num_samples=num_samples,
-            seq_len=seq_len,
-            point_dim=point_dim,
-            steps=int(args.steps),
-            device=device,
-            z_init=z_init.clone(),
-            obstacle_center=obstacle_center,
-            obstacle_radius=obstacle_radius,
-            guidance_scale=float(args.guidance_scale),
-            guidance_margin=float(args.guidance_margin),
-            guidance_decay=str(args.guidance_decay),
-            max_guidance_norm=float(args.max_guidance_norm),
-        )
-
         baseline_metrics = evaluate_trajectories(baseline, obstacle_center, obstacle_radius)
-        guided_metrics = evaluate_trajectories(guided, obstacle_center, obstacle_radius)
         baseline_metrics["inference_time_seconds"] = baseline_time
-        guided_metrics["inference_time_seconds"] = guided_time
 
-        results["scenarios"].append(
-            {
-                "name": str(scenario["name"]),
-                "obstacle_center": obstacle_center.tolist(),
-                "obstacle_radius": obstacle_radius,
-                "baseline": baseline_metrics,
-                "guided": guided_metrics,
-            }
-        )
+        scenario_result: dict[str, object] = {
+            "name": str(scenario["name"]),
+            "obstacle_center": obstacle_center.tolist(),
+            "obstacle_radius": obstacle_radius,
+            "methods": ["baseline"],
+            "baseline": baseline_metrics,
+        }
+
+        for guidance_decay in guidance_decays:
+            guided, guided_time = sample_guided(
+                model=model,
+                num_samples=num_samples,
+                seq_len=seq_len,
+                point_dim=point_dim,
+                steps=int(args.steps),
+                device=device,
+                z_init=z_init.clone(),
+                obstacle_center=obstacle_center,
+                obstacle_radius=obstacle_radius,
+                guidance_scale=float(args.guidance_scale),
+                guidance_margin=float(args.guidance_margin),
+                guidance_decay=str(guidance_decay),
+                max_guidance_norm=float(args.max_guidance_norm),
+            )
+            guided_metrics = evaluate_trajectories(guided, obstacle_center, obstacle_radius)
+            guided_metrics["inference_time_seconds"] = guided_time
+            method_name = f"guided_{guidance_decay}"
+            scenario_result["methods"].append(method_name)
+            scenario_result[method_name] = guided_metrics
+
+        results["scenarios"].append(scenario_result)
 
     json_path = Path(args.output_json)
     markdown_path = Path(args.output_markdown)

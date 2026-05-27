@@ -52,9 +52,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--guidance-decay",
         type=str,
-        default="linear",
-        choices=["constant", "linear"],
-        help="Time schedule for the guidance strength.",
+        default="distance_gated",
+        choices=["constant", "distance_gated"],
+        help="Schedule or adaptive mode for the guidance strength.",
     )
     parser.add_argument(
         "--max-guidance-norm",

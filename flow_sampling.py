@@ -99,11 +99,30 @@ def compute_obstacle_energy_gradient(
     return -penalty * direction
 
 
+def compute_obstacle_distance_gate(
+    z: torch.Tensor,
+    obstacle_center: torch.Tensor,
+    obstacle_radius: float,
+    guidance_margin: float,
+    eps: float = 1e-6,
+) -> torch.Tensor:
+    if obstacle_radius < 0.0:
+        raise ValueError("obstacle_radius must be non-negative.")
+    if guidance_margin < 0.0:
+        raise ValueError("guidance_margin must be non-negative.")
+
+    center = obstacle_center.view(1, 1, 3).to(device=z.device, dtype=z.dtype)
+    distance = torch.linalg.norm(z - center, dim=-1, keepdim=True).clamp_min(eps)
+    signed_clearance = distance - float(obstacle_radius)
+    if guidance_margin == 0.0:
+        return (signed_clearance <= 0.0).to(dtype=z.dtype)
+    gate = 1.0 - torch.clamp(signed_clearance / float(guidance_margin), min=0.0, max=1.0)
+    return gate
+
+
 def guidance_strength(t_scalar: float, guidance_scale: float, guidance_decay: str) -> float:
-    if guidance_decay == "constant":
+    if guidance_decay in ("constant", "distance_gated"):
         return guidance_scale
-    if guidance_decay == "linear":
-        return guidance_scale * (1.0 - t_scalar)
     raise ValueError(f"Unsupported guidance_decay: {guidance_decay}")
 
 
@@ -178,6 +197,14 @@ def guided_euler_sample(
             obstacle_radius=obstacle_radius,
             guidance_margin=guidance_margin,
         )
+        if guidance_decay == "distance_gated":
+            gate = compute_obstacle_distance_gate(
+                z=z,
+                obstacle_center=obstacle_center,
+                obstacle_radius=obstacle_radius,
+                guidance_margin=guidance_margin,
+            )
+            grad_e = grad_e * gate
         lambda_t = guidance_strength(t_scalar, guidance_scale, guidance_decay)
         guidance = clip_guidance_norm(lambda_t * grad_e, max_guidance_norm)
         z = z + (v - guidance) * dt
