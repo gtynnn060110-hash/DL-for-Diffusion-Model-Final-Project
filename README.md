@@ -179,6 +179,14 @@ python ablate_guidance.py --device cpu --ablate max_guidance_norm --num-samples 
 
 消融结果会写入 `outputs/ablation_guidance_summary_*.md`、`outputs/ablation_guidance_pareto_*.csv` 与 `outputs/ablation_plots/`。
 
+加入 conditional checkpoint 后，同一脚本会额外输出 `conditional` 与 `conditional_<guidance_decay>`：
+
+```bash
+python ablate_guidance.py --device cpu --conditional-checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --ablate guidance_scale --num-samples 500 --output-json outputs/ablation_conditional_guidance_results.json --output-markdown outputs/ablation_conditional_guidance_summary.md --output-csv outputs/ablation_conditional_guidance_pareto.csv --plot
+```
+
+默认会同时 sweep `constant` 与 `distance_gated`，每张图包含 4 条曲线：`constant`、`distance_gated`、`cond_constant`、`cond_distance_gated`。表格中仍保留 `baseline` 与 `conditional` 参考行。
+
 ### 8. Conditional Rectified Flow（Phase 2）
 
 ```bash
@@ -239,5 +247,6 @@ python evaluate.py --device cpu
 - [x] `RectifiedFlowConditionalMLP` + `train_conditional.py`
 - [x] `evaluate.py` 支持四路对比接口
 - [x] `recflow_conditional.py` 支持 conditional / conditional+guided 可视化
+- [x] `ablate_guidance.py` 支持 conditional guidance ablation 接口
 - [x] 跑完 conditional 训练与 200 样本四路评测
 - [ ] 进一步调参或扩展到更强条件表示（如 SDF）

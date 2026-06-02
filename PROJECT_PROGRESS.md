@@ -44,7 +44,7 @@ flowchart LR
 | Phase 1 Step 4 | 已完成 | 多障碍势能叠加 + 双球夹缝 demo | `flow_sampling.py`, `evaluate.py`, `recflow_guided.py` |
 | Phase 1 Step 5/6 | 已完成 | 固定 / 随机 OOD 场景评估 + 均值汇总 | `evaluate.py` |
 | Phase 1 Step 7 | 已完成 | guidance 参数消融 + Pareto CSV / 图 | `ablate_guidance.py`, `outputs/ablation_*` |
-| Phase 2 | 已完成初版 | 条件化 Rectified Flow + 四路评测 + 可视化 | `generate_conditional_data.py`, `train_conditional.py`, `recflow_conditional.py`, `evaluate.py` |
+| Phase 2 | 已完成初版 | 条件化 Rectified Flow + 四路评测 + 可视化 + conditional ablation 接口 | `generate_conditional_data.py`, `train_conditional.py`, `recflow_conditional.py`, `evaluate.py`, `ablate_guidance.py` |
 
 ---
 
@@ -394,6 +394,7 @@ python ablate_guidance.py --device cpu --ablate max_guidance_norm --num-samples 
 | 条件训练 | `train_conditional.py` 使用同一 Rectified Flow 目标：`MSE(v_theta(x_t,t,c), x1-x0)` |
 | 四路评测 | `evaluate.py --conditional-checkpoint-path ...` 输出 `baseline`、`guided_*`、`conditional`、`conditional_guided_*` |
 | 可视化 | `recflow_conditional.py` 支持 conditional 与 conditional+guided 轨迹图 |
+| Conditional 消融 | `ablate_guidance.py --conditional-checkpoint-path ...` 复用 guidance sweep；图中对比 `constant`、`distance_gated`、`cond_constant`、`cond_distance_gated` 四条曲线 |
 
 ### 实验证据（200 样本，distance_gated）
 
@@ -433,6 +434,7 @@ python train_conditional.py --data-path dataset/conditional_trajectories.npz --c
 python evaluate.py --device cpu --conditional-checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --guidance-decay distance_gated --output-json outputs/evaluation_conditional_results.json --output-markdown outputs/evaluation_conditional_summary.md
 python recflow_conditional.py --device cpu --num-samples 50 --steps 20 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --save-fig outputs/conditional_ood.png --save-generated outputs/conditional_ood.npy --no-show
 python recflow_conditional.py --device cpu --num-samples 50 --steps 20 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guided --save-fig outputs/conditional_guided_ood.png --save-generated outputs/conditional_guided_ood.npy --no-show
+python ablate_guidance.py --device cpu --conditional-checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --ablate guidance_scale --num-samples 500 --output-json outputs/ablation_conditional_guidance_results.json --output-markdown outputs/ablation_conditional_guidance_summary.md --output-csv outputs/ablation_conditional_guidance_pareto.csv --plot
 ```
 
 ---
@@ -489,6 +491,7 @@ train_conditional.py # Conditional 训练
 - [x] `evaluate.py` 支持四路对比：uncond / uncond+guided / cond / cond+guided
 - [x] `recflow_conditional.py` 支持 conditional / conditional+guided 可视化
 - [x] 跑完 conditional 训练与正式四路评测，补充结果表
+- [x] `ablate_guidance.py` 支持 conditional guidance ablation 接口
 - [ ] 进一步调参或扩展到 SDF / occupancy 条件表示
 
 ---
@@ -517,6 +520,6 @@ train_conditional.py # Conditional 训练
 | 2026-05 | 阶段五：多障碍势能叠加、`ood_double_gap` 评估、双障碍轨迹图 |
 | 2026-05 | 阶段六：随机 OOD 场景评估与均值汇总 |
 | 2026-06 | 阶段七：guidance 参数消融、Pareto CSV / 图与文档同步 |
-| 2026-06 | Phase 2：conditional 数据、模型、训练脚本、可视化与四路评测结果 |
+| 2026-06 | Phase 2：conditional 数据、模型、训练脚本、可视化、四路评测与 conditional ablation 接口 |
 
 *后续扩展 SDF 条件输入、序列模型或新增 benchmark 时，请继续追加「实现 / 证据 / 结论」，并更新本表。*

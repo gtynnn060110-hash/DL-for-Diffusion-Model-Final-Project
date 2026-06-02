@@ -12,10 +12,19 @@ from evaluate import (
     parse_scenarios,
     resolve_device,
     sample_baseline,
+    sample_conditional,
+    sample_conditional_guided,
     sample_guided,
     unpack_obstacles,
 )
-from flow_sampling import load_model_from_checkpoint, load_real_data, make_initial_noise, set_seed
+from flow_sampling import (
+    load_conditional_model_from_checkpoint,
+    load_model_from_checkpoint,
+    load_real_data,
+    make_initial_noise,
+    make_obstacle_condition,
+    set_seed,
+)
 
 
 STANDARD_EXPERIMENT = {
@@ -43,6 +52,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--data-path", type=str, default=STANDARD_EXPERIMENT["data_path"])
     parser.add_argument("--checkpoint-path", type=str, default=STANDARD_EXPERIMENT["checkpoint_path"])
+    parser.add_argument(
+        "--conditional-checkpoint-path",
+        type=str,
+        default="",
+        help=(
+            "Optional conditional checkpoint. When provided, ablate conditional "
+            "and conditional+guided methods alongside the unconditional model."
+        ),
+    )
     parser.add_argument("--num-samples", type=int, default=STANDARD_EXPERIMENT["num_samples"])
     parser.add_argument("--steps", type=int, default=STANDARD_EXPERIMENT["steps"])
     parser.add_argument("--seed", type=int, default=STANDARD_EXPERIMENT["seed"])
@@ -248,7 +266,7 @@ def write_csv(rows: list[dict[str, float]], csv_path: Path) -> None:
     ]
     csv_path.parent.mkdir(parents=True, exist_ok=True)
     with csv_path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow({field: row[field] for field in fieldnames})
@@ -278,7 +296,13 @@ def plot_ablation(
         if not scenario_rows:
             continue
 
-        decays = sorted({row["guidance_decay"] for row in scenario_rows})
+        decays = sorted(
+            {
+                row["guidance_decay"]
+                for row in scenario_rows
+                if row["guidance_decay"] not in ("baseline", "conditional")
+            }
+        )
         fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharex=True)
         ax_success, ax_smooth = axes
 
@@ -288,13 +312,10 @@ def plot_ablation(
             x_vals = [row["value"] for row in decay_rows]
             y_success = [row["success_rate"] for row in decay_rows]
             y_smooth = [row["smoothness"] for row in decay_rows]
-            if decay == "baseline":
-                ax_success.scatter(x_vals, y_success, label=decay, alpha=0.9, s=48, marker="X", color="black")
-                ax_smooth.scatter(x_vals, y_smooth, label=decay, alpha=0.9, s=48, marker="X", color="black")
-                continue
-            ax_success.plot(x_vals, y_success, label=decay, alpha=0.85, linewidth=1.5)
+            label = decay.replace("conditional_", "cond_")
+            ax_success.plot(x_vals, y_success, label=label, alpha=0.85, linewidth=1.5)
             ax_success.scatter(x_vals, y_success, alpha=0.85, s=36)
-            ax_smooth.plot(x_vals, y_smooth, label=decay, alpha=0.85, linewidth=1.5)
+            ax_smooth.plot(x_vals, y_smooth, label=label, alpha=0.85, linewidth=1.5)
             ax_smooth.scatter(x_vals, y_smooth, alpha=0.85, s=36)
 
         ax_success.set_xlabel(sweep_param)
@@ -357,6 +378,16 @@ def main() -> None:
         point_dim=point_dim,
         device=device,
     )
+    conditional_model = None
+    conditional_condition_dim = 0
+    if args.conditional_checkpoint_path:
+        conditional_model = load_conditional_model_from_checkpoint(
+            checkpoint_path=Path(args.conditional_checkpoint_path),
+            seq_len=seq_len,
+            point_dim=point_dim,
+            device=device,
+        )
+        conditional_condition_dim = int(getattr(conditional_model, "condition_dim"))
 
     json_path = Path(args.output_json)
     markdown_path = Path(args.output_markdown)
@@ -403,6 +434,37 @@ def main() -> None:
                 }
             )
 
+            condition = None
+            if conditional_model is not None:
+                condition = make_obstacle_condition(
+                    obstacle_centers=torch.tensor(obstacle_centers, device=device, dtype=torch.float32),
+                    obstacle_radii=torch.tensor(obstacle_radii, device=device, dtype=torch.float32),
+                    condition_dim=conditional_condition_dim,
+                )
+                conditional, conditional_time = sample_conditional(
+                    model=conditional_model,
+                    condition=condition,
+                    num_samples=num_samples,
+                    seq_len=seq_len,
+                    point_dim=point_dim,
+                    steps=int(args.steps),
+                    device=device,
+                    z_init=z_init.clone(),
+                )
+                conditional_metrics = evaluate_trajectories(
+                    conditional, obstacle_centers, obstacle_radii
+                )
+                conditional_metrics["inference_time_seconds"] = conditional_time
+                rows.append(
+                    {
+                        "scenario": str(scenario["name"]),
+                        "guidance_decay": "conditional",
+                        "param": sweep_param,
+                        "value": 0.0,
+                        **conditional_metrics,
+                    }
+                )
+
             for guidance_decay in guidance_decays:
                 for value in sweep_values:
                     guidance_scale = float(args.guidance_scale)
@@ -442,6 +504,37 @@ def main() -> None:
                         }
                     )
 
+                    if conditional_model is not None and condition is not None:
+                        conditional_guided, conditional_guided_time = sample_conditional_guided(
+                            model=conditional_model,
+                            condition=condition,
+                            num_samples=num_samples,
+                            seq_len=seq_len,
+                            point_dim=point_dim,
+                            steps=int(args.steps),
+                            device=device,
+                            z_init=z_init.clone(),
+                            obstacle_centers=obstacle_centers,
+                            obstacle_radii=obstacle_radii,
+                            guidance_scale=guidance_scale,
+                            guidance_margin=guidance_margin,
+                            guidance_decay=str(guidance_decay),
+                            max_guidance_norm=max_guidance_norm,
+                        )
+                        conditional_guided_metrics = evaluate_trajectories(
+                            conditional_guided, obstacle_centers, obstacle_radii
+                        )
+                        conditional_guided_metrics["inference_time_seconds"] = conditional_guided_time
+                        rows.append(
+                            {
+                                "scenario": str(scenario["name"]),
+                                "guidance_decay": f"conditional_{guidance_decay}",
+                                "param": sweep_param,
+                                "value": float(value),
+                                **conditional_guided_metrics,
+                            }
+                        )
+
         scenario_summary = summarize_rows(
             rows=[row for row in rows if not row["scenario"].startswith("random_ood_")],
             key_fields=("scenario", "guidance_decay", "param", "value"),
@@ -459,6 +552,8 @@ def main() -> None:
             "config": {
                 "data_path": args.data_path,
                 "checkpoint_path": args.checkpoint_path,
+                "conditional_checkpoint_path": args.conditional_checkpoint_path,
+                "conditional_condition_dim": conditional_condition_dim,
                 "device": str(device),
                 "num_samples": num_samples,
                 "steps": int(args.steps),

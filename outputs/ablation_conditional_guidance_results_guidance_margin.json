@@ -54,7 +54,7 @@
       "min_distance_to_obstacle": 0.07348514348268509,
       "smoothness": 0.26924341917037964,
       "path_length": 17.414791107177734,
-      "inference_time_seconds": 0.027287165983580053
+      "inference_time_seconds": 0.023393999988911673
     },
     {
       "scenario": "in_distribution_origin",
@@ -66,7 +66,7 @@
       "min_distance_to_obstacle": 0.07952055335044861,
       "smoothness": 0.2885024845600128,
       "path_length": 17.806528091430664,
-      "inference_time_seconds": 0.02333770800032653
+      "inference_time_seconds": 0.0221793329983484
     },
     {
       "scenario": "in_distribution_origin",
@@ -78,7 +78,7 @@
       "min_distance_to_obstacle": 0.2231614887714386,
       "smoothness": 0.295381098985672,
       "path_length": 17.887834548950195,
-      "inference_time_seconds": 0.026187083014519885
+      "inference_time_seconds": 0.02511062502162531
     },
     {
       "scenario": "in_distribution_origin",
@@ -90,7 +90,7 @@
       "min_distance_to_obstacle": 0.19189859926700592,
       "smoothness": 0.3165639042854309,
       "path_length": 18.30823516845703,
-      "inference_time_seconds": 0.025618957995902747
+      "inference_time_seconds": 0.02594841699465178
     },
     {
       "scenario": "in_distribution_origin",
@@ -102,7 +102,7 @@
       "min_distance_to_obstacle": 0.3053533732891083,
       "smoothness": 0.3367636799812317,
       "path_length": 18.591981887817383,
-      "inference_time_seconds": 0.025591625017113984
+      "inference_time_seconds": 0.02563645801274106
     },
     {
       "scenario": "in_distribution_origin",
@@ -114,7 +114,7 @@
       "min_distance_to_obstacle": 0.29145389795303345,
       "smoothness": 0.36123934388160706,
       "path_length": 19.061180114746094,
-      "inference_time_seconds": 0.025902709021465853
+      "inference_time_seconds": 0.025210332998540252
     },
     {
       "scenario": "in_distribution_origin",
@@ -126,7 +126,7 @@
       "min_distance_to_obstacle": 0.4107174575328827,
       "smoothness": 0.41679590940475464,
       "path_length": 19.862430572509766,
-      "inference_time_seconds": 0.026481457985937595
+      "inference_time_seconds": 0.02604795800289139
     },
     {
       "scenario": "in_distribution_origin",
@@ -138,7 +138,7 @@
       "min_distance_to_obstacle": 0.3447907269001007,
       "smoothness": 0.44771480560302734,
       "path_length": 20.415393829345703,
-      "inference_time_seconds": 0.026955042005283758
+      "inference_time_seconds": 0.025046249997103587
     },
     {
       "scenario": "in_distribution_origin",
@@ -150,7 +150,7 @@
       "min_distance_to_obstacle": 0.2881409227848053,
       "smoothness": 0.5602984428405762,
       "path_length": 21.935876846313477,
-      "inference_time_seconds": 0.026063834025990218
+      "inference_time_seconds": 0.025437458010856062
     },
     {
       "scenario": "in_distribution_origin",
@@ -162,7 +162,7 @@
       "min_distance_to_obstacle": 0.3931073546409607,
       "smoothness": 0.6020399332046509,
       "path_length": 22.60301971435547,
-      "inference_time_seconds": 0.026071000000229105
+      "inference_time_seconds": 0.026517041987972334
     },
     {
       "scenario": "in_distribution_origin",
@@ -174,7 +174,7 @@
       "min_distance_to_obstacle": 0.3840453028678894,
       "smoothness": 0.8083569407463074,
       "path_length": 25.0986328125,
-      "inference_time_seconds": 0.02537712501361966
+      "inference_time_seconds": 0.02575062500545755
     },
     {
       "scenario": "in_distribution_origin",
@@ -186,7 +186,7 @@
       "min_distance_to_obstacle": 0.45869308710098267,
       "smoothness": 0.8698216676712036,
       "path_length": 25.938474655151367,
-      "inference_time_seconds": 0.026013499998953193
+      "inference_time_seconds": 0.025117459008470178
     },
     {
       "scenario": "in_distribution_origin",
@@ -198,7 +198,7 @@
       "min_distance_to_obstacle": 0.44069746136665344,
       "smoothness": 1.2312783002853394,
       "path_length": 29.714862823486328,
-      "inference_time_seconds": 0.026281333004590124
+      "inference_time_seconds": 0.025851332989986986
     },
     {
       "scenario": "in_distribution_origin",
@@ -210,7 +210,7 @@
       "min_distance_to_obstacle": 0.44507381319999695,
       "smoothness": 1.3325709104537964,
       "path_length": 30.827991485595703,
-      "inference_time_seconds": 0.025809000013396144
+      "inference_time_seconds": 0.02369579201331362
     },
     {
       "scenario": "in_distribution_origin",
@@ -222,7 +222,7 @@
       "min_distance_to_obstacle": 0.35918477177619934,
       "smoothness": 1.9581406116485596,
       "path_length": 36.26751708984375,
-      "inference_time_seconds": 0.026615582988597453
+      "inference_time_seconds": 0.02576724998652935
     },
     {
       "scenario": "in_distribution_origin",
@@ -234,7 +234,7 @@
       "min_distance_to_obstacle": 0.645522952079773,
       "smoothness": 2.152188539505005,
       "path_length": 37.91421127319336,
-      "inference_time_seconds": 0.02588258299510926
+      "inference_time_seconds": 0.026827958005014807
     },
     {
       "scenario": "in_distribution_origin",
@@ -246,7 +246,7 @@
       "min_distance_to_obstacle": 0.49097326397895813,
       "smoothness": 3.212198495864868,
       "path_length": 45.323638916015625,
-      "inference_time_seconds": 0.025582749978639185
+      "inference_time_seconds": 0.02617562498198822
     },
     {
       "scenario": "in_distribution_origin",
@@ -258,7 +258,7 @@
       "min_distance_to_obstacle": 0.7338045835494995,
       "smoothness": 3.641376256942749,
       "path_length": 48.10786056518555,
-      "inference_time_seconds": 0.02604445899487473
+      "inference_time_seconds": 0.02577183401444927
     },
     {
       "scenario": "in_distribution_origin",
@@ -270,7 +270,7 @@
       "min_distance_to_obstacle": 0.6567025184631348,
       "smoothness": 5.336719512939453,
       "path_length": 57.46892547607422,
-      "inference_time_seconds": 0.02585366601124406
+      "inference_time_seconds": 0.026285333005944267
     },
     {
       "scenario": "in_distribution_origin",
@@ -282,7 +282,7 @@
       "min_distance_to_obstacle": 0.7397531270980835,
       "smoothness": 6.2730793952941895,
       "path_length": 62.14741134643555,
-      "inference_time_seconds": 0.025431458023376763
+      "inference_time_seconds": 0.02453458300442435
     },
     {
       "scenario": "in_distribution_origin",
@@ -294,7 +294,7 @@
       "min_distance_to_obstacle": 0.8358118534088135,
       "smoothness": 14.120872497558594,
       "path_length": 92.43869018554688,
-      "inference_time_seconds": 0.02585637499578297
+      "inference_time_seconds": 0.02514254199923016
     },
     {
       "scenario": "in_distribution_origin",
@@ -306,7 +306,7 @@
       "min_distance_to_obstacle": 0.5387855172157288,
       "smoothness": 16.71122169494629,
       "path_length": 101.23213958740234,
-      "inference_time_seconds": 0.026111625018529594
+      "inference_time_seconds": 0.025942917010979727
     },
     {
       "scenario": "in_distribution_origin",
@@ -318,7 +318,7 @@
       "min_distance_to_obstacle": 0.2231614887714386,
       "smoothness": 0.295381098985672,
       "path_length": 17.887834548950195,
-      "inference_time_seconds": 0.03116016701096669
+      "inference_time_seconds": 0.031065249990206212
     },
     {
       "scenario": "in_distribution_origin",
@@ -330,7 +330,7 @@
       "min_distance_to_obstacle": 0.19189859926700592,
       "smoothness": 0.3165639042854309,
       "path_length": 18.30823516845703,
-      "inference_time_seconds": 0.028009874979034066
+      "inference_time_seconds": 0.027227832993958145
     },
     {
       "scenario": "in_distribution_origin",
@@ -342,7 +342,7 @@
       "min_distance_to_obstacle": 0.31099969148635864,
       "smoothness": 0.33348843455314636,
       "path_length": 18.529335021972656,
-      "inference_time_seconds": 0.028273792006075382
+      "inference_time_seconds": 0.028432291990611702
     },
     {
       "scenario": "in_distribution_origin",
@@ -354,7 +354,7 @@
       "min_distance_to_obstacle": 0.29166722297668457,
       "smoothness": 0.35759976506233215,
       "path_length": 18.992448806762695,
-      "inference_time_seconds": 0.027880749985342845
+      "inference_time_seconds": 0.028143125004135072
     },
     {
       "scenario": "in_distribution_origin",
@@ -366,7 +366,7 @@
       "min_distance_to_obstacle": 0.412131667137146,
       "smoothness": 0.3970736861228943,
       "path_length": 19.527076721191406,
-      "inference_time_seconds": 0.02728400001069531
+      "inference_time_seconds": 0.02824345900444314
     },
     {
       "scenario": "in_distribution_origin",
@@ -378,7 +378,7 @@
       "min_distance_to_obstacle": 0.3372715413570404,
       "smoothness": 0.4259101450443268,
       "path_length": 20.052621841430664,
-      "inference_time_seconds": 0.027500666998093948
+      "inference_time_seconds": 0.028054166992660612
     },
     {
       "scenario": "in_distribution_origin",
@@ -390,7 +390,7 @@
       "min_distance_to_obstacle": 0.37779879570007324,
       "smoothness": 0.49539437890052795,
       "path_length": 20.967512130737305,
-      "inference_time_seconds": 0.02692654199199751
+      "inference_time_seconds": 0.027396291989134625
     },
     {
       "scenario": "in_distribution_origin",
@@ -402,7 +402,7 @@
       "min_distance_to_obstacle": 0.39348334074020386,
       "smoothness": 0.5311272144317627,
       "path_length": 21.571170806884766,
-      "inference_time_seconds": 0.027176792005775496
+      "inference_time_seconds": 0.026826999994227663
     },
     {
       "scenario": "in_distribution_origin",
@@ -414,7 +414,7 @@
       "min_distance_to_obstacle": 0.37110355496406555,
       "smoothness": 0.6428506970405579,
       "path_length": 22.96038246154785,
-      "inference_time_seconds": 0.02787345799151808
+      "inference_time_seconds": 0.027754791983170435
     },
     {
       "scenario": "in_distribution_origin",
@@ -426,7 +426,7 @@
       "min_distance_to_obstacle": 0.5466184616088867,
       "smoothness": 0.6889886260032654,
       "path_length": 23.668561935424805,
-      "inference_time_seconds": 0.02744949999032542
+      "inference_time_seconds": 0.027640499989502132
     },
     {
       "scenario": "in_distribution_origin",
@@ -438,7 +438,7 @@
       "min_distance_to_obstacle": 0.4853827655315399,
       "smoothness": 0.8618427515029907,
       "path_length": 25.64415168762207,
-      "inference_time_seconds": 0.028151124977739528
+      "inference_time_seconds": 0.02732937497785315
     },
     {
       "scenario": "in_distribution_origin",
@@ -450,7 +450,7 @@
       "min_distance_to_obstacle": 0.5226172804832458,
       "smoothness": 0.9249538779258728,
       "path_length": 26.497268676757812,
-      "inference_time_seconds": 0.028098083013901487
+      "inference_time_seconds": 0.027709584013791755
     },
     {
       "scenario": "in_distribution_origin",
@@ -462,7 +462,7 @@
       "min_distance_to_obstacle": 0.5520942211151123,
       "smoothness": 1.1874269247055054,
       "path_length": 29.191917419433594,
-      "inference_time_seconds": 0.02798745798645541
+      "inference_time_seconds": 0.027709583984687924
     },
     {
       "scenario": "in_distribution_origin",
@@ -474,7 +474,7 @@
       "min_distance_to_obstacle": 0.48452284932136536,
       "smoothness": 1.2798571586608887,
       "path_length": 30.252296447753906,
-      "inference_time_seconds": 0.028240709012607113
+      "inference_time_seconds": 0.029509790998417884
     },
     {
       "scenario": "in_distribution_origin",
@@ -486,7 +486,7 @@
       "min_distance_to_obstacle": 0.5187446475028992,
       "smoothness": 1.676155924797058,
       "path_length": 33.82171630859375,
-      "inference_time_seconds": 0.028420499991625547
+      "inference_time_seconds": 0.02779454199480824
     },
     {
       "scenario": "in_distribution_origin",
@@ -498,7 +498,7 @@
       "min_distance_to_obstacle": 0.6851574182510376,
       "smoothness": 1.8232946395874023,
       "path_length": 35.218605041503906,
-      "inference_time_seconds": 0.02833558397833258
+      "inference_time_seconds": 0.026564208994386718
     },
     {
       "scenario": "in_distribution_origin",
@@ -510,7 +510,7 @@
       "min_distance_to_obstacle": 0.6033108234405518,
       "smoothness": 2.4153499603271484,
       "path_length": 39.785037994384766,
-      "inference_time_seconds": 0.028182917012600228
+      "inference_time_seconds": 0.027720833983039483
     },
     {
       "scenario": "in_distribution_origin",
@@ -522,7 +522,7 @@
       "min_distance_to_obstacle": 0.8475447297096252,
       "smoothness": 2.6731934547424316,
       "path_length": 41.790706634521484,
-      "inference_time_seconds": 0.028187082993099466
+      "inference_time_seconds": 0.028014082985464483
     },
     {
       "scenario": "in_distribution_origin",
@@ -534,7 +534,7 @@
       "min_distance_to_obstacle": 0.5785969495773315,
       "smoothness": 5.182753086090088,
       "path_length": 56.74604797363281,
-      "inference_time_seconds": 0.027598290995229036
+      "inference_time_seconds": 0.028317083982983604
     },
     {
       "scenario": "in_distribution_origin",
@@ -546,7 +546,7 @@
       "min_distance_to_obstacle": 0.563119649887085,
       "smoothness": 6.064924716949463,
       "path_length": 61.275360107421875,
-      "inference_time_seconds": 0.03987316699931398
+      "inference_time_seconds": 0.02723737497581169
     },
     {
       "scenario": "ood_shifted_y",
@@ -558,7 +558,7 @@
       "min_distance_to_obstacle": 0.0766620934009552,
       "smoothness": 0.26924341917037964,
       "path_length": 17.414791107177734,
-      "inference_time_seconds": 0.021756041009211913
+      "inference_time_seconds": 0.03033837501425296
     },
     {
       "scenario": "ood_shifted_y",
@@ -570,7 +570,7 @@
       "min_distance_to_obstacle": 0.05698603764176369,
       "smoothness": 0.2862992584705353,
       "path_length": 17.774051666259766,
-      "inference_time_seconds": 0.021963167004287243
+      "inference_time_seconds": 0.0240057920163963
     },
     {
       "scenario": "ood_shifted_y",
@@ -582,7 +582,7 @@
       "min_distance_to_obstacle": 0.21720543503761292,
       "smoothness": 0.27550336718559265,
       "path_length": 17.50625228881836,
-      "inference_time_seconds": 0.026432333019329235
+      "inference_time_seconds": 0.02495654101949185
     },
     {
       "scenario": "ood_shifted_y",
@@ -594,7 +594,7 @@
       "min_distance_to_obstacle": 0.3208937346935272,
       "smoothness": 0.2906443178653717,
       "path_length": 17.831863403320312,
-      "inference_time_seconds": 0.02770229201996699
+      "inference_time_seconds": 0.02529479199438356
     },
     {
       "scenario": "ood_shifted_y",
@@ -606,7 +606,7 @@
       "min_distance_to_obstacle": 0.2706383168697357,
       "smoothness": 0.2853354215621948,
       "path_length": 17.637727737426758,
-      "inference_time_seconds": 0.02787362501840107
+      "inference_time_seconds": 0.026506499998504296
     },
     {
       "scenario": "ood_shifted_y",
@@ -618,7 +618,7 @@
       "min_distance_to_obstacle": 0.40228497982025146,
       "smoothness": 0.2977874279022217,
       "path_length": 17.925121307373047,
-      "inference_time_seconds": 0.02671741700032726
+      "inference_time_seconds": 0.02686604199698195
     },
     {
       "scenario": "ood_shifted_y",
@@ -630,7 +630,7 @@
       "min_distance_to_obstacle": 0.2982093393802643,
       "smoothness": 0.30263668298721313,
       "path_length": 17.864765167236328,
-      "inference_time_seconds": 0.026051291992189363
+      "inference_time_seconds": 0.025374916003784165
     },
     {
       "scenario": "ood_shifted_y",
@@ -642,7 +642,7 @@
       "min_distance_to_obstacle": 0.40442904829978943,
       "smoothness": 0.3105297088623047,
       "path_length": 18.09131622314453,
-      "inference_time_seconds": 0.026541250001173466
+      "inference_time_seconds": 0.0260358749947045
     },
     {
       "scenario": "ood_shifted_y",
@@ -654,7 +654,7 @@
       "min_distance_to_obstacle": 0.3386619985103607,
       "smoothness": 0.32823726534843445,
       "path_length": 18.204072952270508,
-      "inference_time_seconds": 0.025711334019433707
+      "inference_time_seconds": 0.025855125015368685
     },
     {
       "scenario": "ood_shifted_y",
@@ -666,7 +666,7 @@
       "min_distance_to_obstacle": 0.5191863179206848,
       "smoothness": 0.330352246761322,
       "path_length": 18.363492965698242,
-      "inference_time_seconds": 0.02575583299039863
+      "inference_time_seconds": 0.025458250020164996
     },
     {
       "scenario": "ood_shifted_y",
@@ -678,7 +678,7 @@
       "min_distance_to_obstacle": 0.6156240701675415,
       "smoothness": 0.36155223846435547,
       "path_length": 18.665979385375977,
-      "inference_time_seconds": 0.027039167005568743
+      "inference_time_seconds": 0.025780416995985433
     },
     {
       "scenario": "ood_shifted_y",
@@ -690,7 +690,7 @@
       "min_distance_to_obstacle": 0.6637147068977356,
       "smoothness": 0.35947516560554504,
       "path_length": 18.78769874572754,
-      "inference_time_seconds": 0.030682082986459136
+      "inference_time_seconds": 0.027061208005761728
     },
     {
       "scenario": "ood_shifted_y",
@@ -702,7 +702,7 @@
       "min_distance_to_obstacle": 0.6031360626220703,
       "smoothness": 0.40205448865890503,
       "path_length": 19.27265167236328,
-      "inference_time_seconds": 0.028264417022000998
+      "inference_time_seconds": 0.026437292021000758
     },
     {
       "scenario": "ood_shifted_y",
@@ -714,7 +714,7 @@
       "min_distance_to_obstacle": 0.8619628548622131,
       "smoothness": 0.3992951214313507,
       "path_length": 19.400022506713867,
-      "inference_time_seconds": 0.026866416999837384
+      "inference_time_seconds": 0.025627333990996704
     },
     {
       "scenario": "ood_shifted_y",
@@ -726,7 +726,7 @@
       "min_distance_to_obstacle": 0.8016138672828674,
       "smoothness": 0.4544532001018524,
       "path_length": 20.090309143066406,
-      "inference_time_seconds": 0.02578370799892582
+      "inference_time_seconds": 0.02608741697622463
     },
     {
       "scenario": "ood_shifted_y",
@@ -738,7 +738,7 @@
       "min_distance_to_obstacle": 1.1620252132415771,
       "smoothness": 0.4535774290561676,
       "path_length": 20.246355056762695,
-      "inference_time_seconds": 0.026431625010445714
+      "inference_time_seconds": 0.02648745902115479
     },
     {
       "scenario": "ood_shifted_y",
@@ -750,7 +750,7 @@
       "min_distance_to_obstacle": 1.022306203842163,
       "smoothness": 0.5239454507827759,
       "path_length": 21.194578170776367,
-      "inference_time_seconds": 0.026325208018533885
+      "inference_time_seconds": 0.025165457976981997
     },
     {
       "scenario": "ood_shifted_y",
@@ -762,7 +762,7 @@
       "min_distance_to_obstacle": 1.3787431716918945,
       "smoothness": 0.5285151600837708,
       "path_length": 21.373037338256836,
-      "inference_time_seconds": 0.026652125001419336
+      "inference_time_seconds": 0.024608250008895993
     },
     {
       "scenario": "ood_shifted_y",
@@ -774,7 +774,7 @@
       "min_distance_to_obstacle": 1.418067216873169,
       "smoothness": 0.624947726726532,
       "path_length": 22.693592071533203,
-      "inference_time_seconds": 0.02615583298029378
+      "inference_time_seconds": 0.025759082986041903
     },
     {
       "scenario": "ood_shifted_y",
@@ -786,7 +786,7 @@
       "min_distance_to_obstacle": 1.7554203271865845,
       "smoothness": 0.6323927640914917,
       "path_length": 22.859386444091797,
-      "inference_time_seconds": 0.026465333998203278
+      "inference_time_seconds": 0.02768354199361056
     },
     {
       "scenario": "ood_shifted_y",
@@ -798,7 +798,7 @@
       "min_distance_to_obstacle": 1.291290521621704,
       "smoothness": 0.9969680905342102,
       "path_length": 27.38162612915039,
-      "inference_time_seconds": 0.028901959012728184
+      "inference_time_seconds": 0.025668749993201345
     },
     {
       "scenario": "ood_shifted_y",
@@ -810,7 +810,7 @@
       "min_distance_to_obstacle": 2.1890389919281006,
       "smoothness": 1.0014760494232178,
       "path_length": 27.317434310913086,
-      "inference_time_seconds": 0.02743437499157153
+      "inference_time_seconds": 0.024312583002028987
     },
     {
       "scenario": "ood_shifted_y",
@@ -822,7 +822,7 @@
       "min_distance_to_obstacle": 0.21720543503761292,
       "smoothness": 0.27550336718559265,
       "path_length": 17.50625228881836,
-      "inference_time_seconds": 0.030224917019950226
+      "inference_time_seconds": 0.02882287499960512
     },
     {
       "scenario": "ood_shifted_y",
@@ -834,7 +834,7 @@
       "min_distance_to_obstacle": 0.3208937346935272,
       "smoothness": 0.2906443178653717,
       "path_length": 17.831863403320312,
-      "inference_time_seconds": 0.029257000016514212
+      "inference_time_seconds": 0.027741041994886473
     },
     {
       "scenario": "ood_shifted_y",
@@ -846,7 +846,7 @@
       "min_distance_to_obstacle": 0.2788245379924774,
       "smoothness": 0.28500819206237793,
       "path_length": 17.63364601135254,
-      "inference_time_seconds": 0.028553958982229233
+      "inference_time_seconds": 0.02807800000300631
     },
     {
       "scenario": "ood_shifted_y",
@@ -858,7 +858,7 @@
       "min_distance_to_obstacle": 0.4000915586948395,
       "smoothness": 0.2976575493812561,
       "path_length": 17.924301147460938,
-      "inference_time_seconds": 0.030307292006909847
+      "inference_time_seconds": 0.02817183401202783
     },
     {
       "scenario": "ood_shifted_y",
@@ -870,7 +870,7 @@
       "min_distance_to_obstacle": 0.2893693447113037,
       "smoothness": 0.29983851313591003,
       "path_length": 17.82532501220703,
-      "inference_time_seconds": 0.028791290998924524
+      "inference_time_seconds": 0.02699779099202715
     },
     {
       "scenario": "ood_shifted_y",
@@ -882,7 +882,7 @@
       "min_distance_to_obstacle": 0.46225982904434204,
       "smoothness": 0.30865636467933655,
       "path_length": 18.066808700561523,
-      "inference_time_seconds": 0.02830654100398533
+      "inference_time_seconds": 0.02807591698365286
     },
     {
       "scenario": "ood_shifted_y",
@@ -894,7 +894,7 @@
       "min_distance_to_obstacle": 0.3242260813713074,
       "smoothness": 0.31974706053733826,
       "path_length": 18.07767105102539,
-      "inference_time_seconds": 0.02857016702182591
+      "inference_time_seconds": 0.027980874991044402
     },
     {
       "scenario": "ood_shifted_y",
@@ -906,7 +906,7 @@
       "min_distance_to_obstacle": 0.4412676692008972,
       "smoothness": 0.323651522397995,
       "path_length": 18.26154327392578,
-      "inference_time_seconds": 0.027863249997608364
+      "inference_time_seconds": 0.028375082998536527
     },
     {
       "scenario": "ood_shifted_y",
@@ -918,7 +918,7 @@
       "min_distance_to_obstacle": 0.4882516860961914,
       "smoothness": 0.34368792176246643,
       "path_length": 18.389474868774414,
-      "inference_time_seconds": 0.027944041998125613
+      "inference_time_seconds": 0.026908208994427696
     },
     {
       "scenario": "ood_shifted_y",
@@ -930,7 +930,7 @@
       "min_distance_to_obstacle": 0.6284921765327454,
       "smoothness": 0.34266409277915955,
       "path_length": 18.524457931518555,
-      "inference_time_seconds": 0.027722124999854714
+      "inference_time_seconds": 0.02657304098829627
     },
     {
       "scenario": "ood_shifted_y",
@@ -942,7 +942,7 @@
       "min_distance_to_obstacle": 0.6322205066680908,
       "smoothness": 0.37105944752693176,
       "path_length": 18.767499923706055,
-      "inference_time_seconds": 0.027763334015617147
+      "inference_time_seconds": 0.02949462499236688
     },
     {
       "scenario": "ood_shifted_y",
@@ -954,7 +954,7 @@
       "min_distance_to_obstacle": 0.7754068970680237,
       "smoothness": 0.3669092655181885,
       "path_length": 18.877492904663086,
-      "inference_time_seconds": 0.027776041999459267
+      "inference_time_seconds": 0.028182458016090095
     },
     {
       "scenario": "ood_shifted_y",
@@ -966,7 +966,7 @@
       "min_distance_to_obstacle": 0.6427526473999023,
       "smoothness": 0.4021562933921814,
       "path_length": 19.229820251464844,
-      "inference_time_seconds": 0.02828474997659214
+      "inference_time_seconds": 0.028482000023359433
     },
     {
       "scenario": "ood_shifted_y",
@@ -978,7 +978,7 @@
       "min_distance_to_obstacle": 0.9273392558097839,
       "smoothness": 0.3976892828941345,
       "path_length": 19.347909927368164,
-      "inference_time_seconds": 0.02758883300703019
+      "inference_time_seconds": 0.027323290996719152
     },
     {
       "scenario": "ood_shifted_y",
@@ -990,7 +990,7 @@
       "min_distance_to_obstacle": 0.7768191695213318,
       "smoothness": 0.44029679894447327,
       "path_length": 19.820241928100586,
-      "inference_time_seconds": 0.028233583987457678
+      "inference_time_seconds": 0.028385167010128498
     },
     {
       "scenario": "ood_shifted_y",
@@ -1002,7 +1002,7 @@
       "min_distance_to_obstacle": 1.1098345518112183,
       "smoothness": 0.4377281963825226,
       "path_length": 19.9709415435791,
-      "inference_time_seconds": 0.027905916998861358
+      "inference_time_seconds": 0.028079749987227842
     },
     {
       "scenario": "ood_shifted_y",
@@ -1014,7 +1014,7 @@
       "min_distance_to_obstacle": 0.48362991213798523,
       "smoothness": 0.4882177710533142,
       "path_length": 20.5759220123291,
-      "inference_time_seconds": 0.03376454199315049
+      "inference_time_seconds": 0.027612459001829848
     },
     {
       "scenario": "ood_shifted_y",
@@ -1026,7 +1026,7 @@
       "min_distance_to_obstacle": 1.325529932975769,
       "smoothness": 0.4897518754005432,
       "path_length": 20.757308959960938,
-      "inference_time_seconds": 0.02777691700612195
+      "inference_time_seconds": 0.02818166700308211
     },
     {
       "scenario": "ood_shifted_y",
@@ -1038,7 +1038,7 @@
       "min_distance_to_obstacle": 1.3278875350952148,
       "smoothness": 0.630458414554596,
       "path_length": 22.73673439025879,
-      "inference_time_seconds": 0.028094500012230128
+      "inference_time_seconds": 0.02818991700769402
     },
     {
       "scenario": "ood_shifted_y",
@@ -1050,7 +1050,7 @@
       "min_distance_to_obstacle": 1.3714232444763184,
       "smoothness": 0.6429080963134766,
       "path_length": 22.94394874572754,
-      "inference_time_seconds": 0.02747458399971947
+      "inference_time_seconds": 0.027783875004388392
     },
     {
       "scenario": "ood_double_gap",
@@ -1062,7 +1062,7 @@
       "min_distance_to_obstacle": 0.06087086722254753,
       "smoothness": 0.26924341917037964,
       "path_length": 17.414791107177734,
-      "inference_time_seconds": 0.022047707985620946
+      "inference_time_seconds": 0.022717750020092353
     },
     {
       "scenario": "ood_double_gap",
@@ -1074,7 +1074,7 @@
       "min_distance_to_obstacle": 0.05026482045650482,
       "smoothness": 0.29152047634124756,
       "path_length": 17.90506362915039,
-      "inference_time_seconds": 0.022613834007643163
+      "inference_time_seconds": 0.023827917000744492
     },
     {
       "scenario": "ood_double_gap",
@@ -1086,7 +1086,7 @@
       "min_distance_to_obstacle": 0.1619475781917572,
       "smoothness": 0.282081663608551,
       "path_length": 17.60692024230957,
-      "inference_time_seconds": 0.027635417005512863
+      "inference_time_seconds": 0.02794595799059607
     },
     {
       "scenario": "ood_double_gap",
@@ -1098,7 +1098,7 @@
       "min_distance_to_obstacle": 0.23899434506893158,
       "smoothness": 0.3013303875923157,
       "path_length": 18.03957176208496,
-      "inference_time_seconds": 0.028153417020803317
+      "inference_time_seconds": 0.02827233399148099
     },
     {
       "scenario": "ood_double_gap",
@@ -1110,7 +1110,7 @@
       "min_distance_to_obstacle": 0.2792123556137085,
       "smoothness": 0.30153074860572815,
       "path_length": 17.88116455078125,
-      "inference_time_seconds": 0.028185167000629008
+      "inference_time_seconds": 0.02687800000421703
     },
     {
       "scenario": "ood_double_gap",
@@ -1122,7 +1122,7 @@
       "min_distance_to_obstacle": 0.301728755235672,
       "smoothness": 0.31687256693840027,
       "path_length": 18.25080108642578,
-      "inference_time_seconds": 0.028491250006482005
+      "inference_time_seconds": 0.027729665976949036
     },
     {
       "scenario": "ood_double_gap",
@@ -1134,7 +1134,7 @@
       "min_distance_to_obstacle": 0.39354267716407776,
       "smoothness": 0.33870837092399597,
       "path_length": 18.401185989379883,
-      "inference_time_seconds": 0.028304040984949097
+      "inference_time_seconds": 0.027635375008685514
     },
     {
       "scenario": "ood_double_gap",
@@ -1146,7 +1146,7 @@
       "min_distance_to_obstacle": 0.378243088722229,
       "smoothness": 0.3480673134326935,
       "path_length": 18.681364059448242,
-      "inference_time_seconds": 0.027972625015536323
+      "inference_time_seconds": 0.027407499990658835
     },
     {
       "scenario": "ood_double_gap",
@@ -1158,7 +1158,7 @@
       "min_distance_to_obstacle": 0.26623305678367615,
       "smoothness": 0.40391048789024353,
       "path_length": 19.309938430786133,
-      "inference_time_seconds": 0.028394791996106505
+      "inference_time_seconds": 0.028392957989126444
     },
     {
       "scenario": "ood_double_gap",
@@ -1170,7 +1170,7 @@
       "min_distance_to_obstacle": 0.5251984000205994,
       "smoothness": 0.4062056541442871,
       "path_length": 19.493833541870117,
-      "inference_time_seconds": 0.08290045900503173
+      "inference_time_seconds": 0.05094099999405444
     },
     {
       "scenario": "ood_double_gap",
@@ -1182,7 +1182,7 @@
       "min_distance_to_obstacle": 0.5537791848182678,
       "smoothness": 0.5215319395065308,
       "path_length": 20.90853500366211,
-      "inference_time_seconds": 0.04011570801958442
+      "inference_time_seconds": 0.0576126659871079
     },
     {
       "scenario": "ood_double_gap",
@@ -1194,7 +1194,7 @@
       "min_distance_to_obstacle": 0.5483592748641968,
       "smoothness": 0.5173870325088501,
       "path_length": 21.01310920715332,
-      "inference_time_seconds": 0.029060833010589704
+      "inference_time_seconds": 0.03750320800463669
     },
     {
       "scenario": "ood_double_gap",
@@ -1206,7 +1206,7 @@
       "min_distance_to_obstacle": 0.517054557800293,
       "smoothness": 0.7715689539909363,
       "path_length": 23.94199562072754,
-      "inference_time_seconds": 0.0271112080081366
+      "inference_time_seconds": 0.037601124990032986
     },
     {
       "scenario": "ood_double_gap",
@@ -1218,7 +1218,7 @@
       "min_distance_to_obstacle": 0.47566619515419006,
       "smoothness": 0.7560935020446777,
       "path_length": 23.946548461914062,
-      "inference_time_seconds": 0.029034750012215227
+      "inference_time_seconds": 0.03090291700209491
     },
     {
       "scenario": "ood_double_gap",
@@ -1230,7 +1230,7 @@
       "min_distance_to_obstacle": 0.536314070224762,
       "smoothness": 1.3351988792419434,
       "path_length": 29.569726943969727,
-      "inference_time_seconds": 0.02989070798503235
+      "inference_time_seconds": 0.02705491697997786
     },
     {
       "scenario": "ood_double_gap",
@@ -1242,7 +1242,7 @@
       "min_distance_to_obstacle": 0.5366582870483398,
       "smoothness": 1.300836443901062,
       "path_length": 29.466835021972656,
-      "inference_time_seconds": 0.032158416986931115
+      "inference_time_seconds": 0.0319593750173226
     },
     {
       "scenario": "ood_double_gap",
@@ -1254,7 +1254,7 @@
       "min_distance_to_obstacle": 0.5660074949264526,
       "smoothness": 2.6180431842803955,
       "path_length": 39.475303649902344,
-      "inference_time_seconds": 0.030285041022580117
+      "inference_time_seconds": 0.029196749994298443
     },
     {
       "scenario": "ood_double_gap",
@@ -1266,7 +1266,7 @@
       "min_distance_to_obstacle": 0.6288452744483948,
       "smoothness": 2.599647045135498,
       "path_length": 39.618038177490234,
-      "inference_time_seconds": 0.033108709001680836
+      "inference_time_seconds": 0.034489666984882206
     },
     {
       "scenario": "ood_double_gap",
@@ -1278,7 +1278,7 @@
       "min_distance_to_obstacle": 0.6463285088539124,
       "smoothness": 5.444077491760254,
       "path_length": 55.577056884765625,
-      "inference_time_seconds": 0.02852699998766184
+      "inference_time_seconds": 0.02961825000238605
     },
     {
       "scenario": "ood_double_gap",
@@ -1290,7 +1290,7 @@
       "min_distance_to_obstacle": 0.5002198219299316,
       "smoothness": 5.724343776702881,
       "path_length": 57.302860260009766,
-      "inference_time_seconds": 0.034407875005854294
+      "inference_time_seconds": 0.030695875000674278
     },
     {
       "scenario": "ood_double_gap",
@@ -1302,7 +1302,7 @@
       "min_distance_to_obstacle": 0.5916685461997986,
       "smoothness": 20.451868057250977,
       "path_length": 108.47212219238281,
-      "inference_time_seconds": 0.03183041699230671
+      "inference_time_seconds": 0.032991417014272884
     },
     {
       "scenario": "ood_double_gap",
@@ -1314,7 +1314,7 @@
       "min_distance_to_obstacle": 0.9315671324729919,
       "smoothness": 22.775177001953125,
       "path_length": 115.67526245117188,
-      "inference_time_seconds": 0.029222417011624202
+      "inference_time_seconds": 0.02912208400084637
     },
     {
       "scenario": "ood_double_gap",
@@ -1326,7 +1326,7 @@
       "min_distance_to_obstacle": 0.1619475781917572,
       "smoothness": 0.282081663608551,
       "path_length": 17.60692024230957,
-      "inference_time_seconds": 0.03764674998819828
+      "inference_time_seconds": 0.03767316599260084
     },
     {
       "scenario": "ood_double_gap",
@@ -1338,7 +1338,7 @@
       "min_distance_to_obstacle": 0.23899434506893158,
       "smoothness": 0.3013303875923157,
       "path_length": 18.03957176208496,
-      "inference_time_seconds": 0.03464749999693595
+      "inference_time_seconds": 0.03738758299732581
     },
     {
       "scenario": "ood_double_gap",
@@ -1350,7 +1350,7 @@
       "min_distance_to_obstacle": 0.2757349908351898,
       "smoothness": 0.3007177710533142,
       "path_length": 17.86882781982422,
-      "inference_time_seconds": 0.035432125005172566
+      "inference_time_seconds": 0.03999945800751448
     },
     {
       "scenario": "ood_double_gap",
@@ -1362,7 +1362,7 @@
       "min_distance_to_obstacle": 0.2975999414920807,
       "smoothness": 0.3162016272544861,
       "path_length": 18.242612838745117,
-      "inference_time_seconds": 0.03473229202791117
+      "inference_time_seconds": 0.03406283399090171
     },
     {
       "scenario": "ood_double_gap",
@@ -1374,7 +1374,7 @@
       "min_distance_to_obstacle": 0.38119640946388245,
       "smoothness": 0.33131566643714905,
       "path_length": 18.287399291992188,
-      "inference_time_seconds": 0.0347886249946896
+      "inference_time_seconds": 0.032511375000467524
     },
     {
       "scenario": "ood_double_gap",
@@ -1386,7 +1386,7 @@
       "min_distance_to_obstacle": 0.3702264726161957,
       "smoothness": 0.3415147662162781,
       "path_length": 18.58562469482422,
-      "inference_time_seconds": 0.03464362499653362
+      "inference_time_seconds": 0.03401891700923443
     },
     {
       "scenario": "ood_double_gap",
@@ -1398,7 +1398,7 @@
       "min_distance_to_obstacle": 0.3713027834892273,
       "smoothness": 0.3768114447593689,
       "path_length": 18.90193748474121,
-      "inference_time_seconds": 0.03160304200719111
+      "inference_time_seconds": 0.03243183399899863
     },
     {
       "scenario": "ood_double_gap",
@@ -1410,7 +1410,7 @@
       "min_distance_to_obstacle": 0.5015311241149902,
       "smoothness": 0.380472332239151,
       "path_length": 19.11565589904785,
-      "inference_time_seconds": 0.03151175001403317
+      "inference_time_seconds": 0.031656417006161064
     },
     {
       "scenario": "ood_double_gap",
@@ -1422,7 +1422,7 @@
       "min_distance_to_obstacle": 0.286784291267395,
       "smoothness": 0.44346192479133606,
       "path_length": 19.807266235351562,
-      "inference_time_seconds": 0.031057957996381447
+      "inference_time_seconds": 0.03259854100178927
     },
     {
       "scenario": "ood_double_gap",
@@ -1434,7 +1434,7 @@
       "min_distance_to_obstacle": 0.5467713475227356,
       "smoothness": 0.4414263367652893,
       "path_length": 19.950397491455078,
-      "inference_time_seconds": 0.03178674998343922
+      "inference_time_seconds": 0.03191383299417794
     },
     {
       "scenario": "ood_double_gap",
@@ -1446,7 +1446,7 @@
       "min_distance_to_obstacle": 0.5830063819885254,
       "smoothness": 0.5576066374778748,
       "path_length": 21.314590454101562,
-      "inference_time_seconds": 0.03247649999684654
+      "inference_time_seconds": 0.031628374999854714
     },
     {
       "scenario": "ood_double_gap",
@@ -1458,7 +1458,7 @@
       "min_distance_to_obstacle": 0.47002479434013367,
       "smoothness": 0.5488503575325012,
       "path_length": 21.386539459228516,
-      "inference_time_seconds": 0.03214041600585915
+      "inference_time_seconds": 0.03199408299406059
     },
     {
       "scenario": "ood_double_gap",
@@ -1470,7 +1470,7 @@
       "min_distance_to_obstacle": 0.5057284832000732,
       "smoothness": 0.7785889506340027,
       "path_length": 23.945472717285156,
-      "inference_time_seconds": 0.03165887499926612
+      "inference_time_seconds": 0.031380334025016055
     },
     {
       "scenario": "ood_double_gap",
@@ -1482,7 +1482,7 @@
       "min_distance_to_obstacle": 0.4851948916912079,
       "smoothness": 0.7581157088279724,
       "path_length": 23.930233001708984,
-      "inference_time_seconds": 0.031640667002648115
+      "inference_time_seconds": 0.031083583016879857
     },
     {
       "scenario": "ood_double_gap",
@@ -1494,7 +1494,7 @@
       "min_distance_to_obstacle": 0.5016655325889587,
       "smoothness": 1.2131633758544922,
       "path_length": 28.392385482788086,
-      "inference_time_seconds": 0.03207141597522423
+      "inference_time_seconds": 0.03224395800498314
     },
     {
       "scenario": "ood_double_gap",
@@ -1506,7 +1506,7 @@
       "min_distance_to_obstacle": 0.6716299057006836,
       "smoothness": 1.1772741079330444,
       "path_length": 28.292776107788086,
-      "inference_time_seconds": 0.03140470798825845
+      "inference_time_seconds": 0.03070195799227804
     },
     {
       "scenario": "ood_double_gap",
@@ -1518,7 +1518,7 @@
       "min_distance_to_obstacle": 0.7317562103271484,
       "smoothness": 2.0694706439971924,
       "path_length": 35.596336364746094,
-      "inference_time_seconds": 0.03164529099012725
+      "inference_time_seconds": 0.03234595799585804
     },
     {
       "scenario": "ood_double_gap",
@@ -1530,7 +1530,7 @@
       "min_distance_to_obstacle": 0.577442467212677,
       "smoothness": 2.0352184772491455,
       "path_length": 35.59534454345703,
-      "inference_time_seconds": 0.031942915986292064
+      "inference_time_seconds": 0.032256958016660064
     },
     {
       "scenario": "ood_double_gap",
@@ -1542,7 +1542,7 @@
       "min_distance_to_obstacle": 0.6642847657203674,
       "smoothness": 6.739382743835449,
       "path_length": 62.06564712524414,
-      "inference_time_seconds": 0.03221083301468752
+      "inference_time_seconds": 0.03159383300226182
     },
     {
       "scenario": "ood_double_gap",
@@ -1554,7 +1554,7 @@
       "min_distance_to_obstacle": 0.6525971293449402,
       "smoothness": 7.2880167961120605,
       "path_length": 64.84961700439453,
-      "inference_time_seconds": 0.031685291993198916
+      "inference_time_seconds": 0.03182020899839699
     }
   ],
   "scenario_summary": {
@@ -1568,7 +1568,7 @@
       "min_distance_to_obstacle": 0.07348514348268509,
       "smoothness": 0.26924341917037964,
       "path_length": 17.414791107177734,
-      "inference_time_seconds": 0.027287165983580053
+      "inference_time_seconds": 0.023393999988911673
     },
     "in_distribution_origin|conditional|guidance_margin|0.0": {
       "scenario": "in_distribution_origin",
@@ -1580,7 +1580,7 @@
       "min_distance_to_obstacle": 0.07952055335044861,
       "smoothness": 0.2885024845600128,
       "path_length": 17.806528091430664,
-      "inference_time_seconds": 0.02333770800032653
+      "inference_time_seconds": 0.0221793329983484
     },
     "in_distribution_origin|constant|guidance_margin|0.0": {
       "scenario": "in_distribution_origin",
@@ -1592,7 +1592,7 @@
       "min_distance_to_obstacle": 0.2231614887714386,
       "smoothness": 0.295381098985672,
       "path_length": 17.887834548950195,
-      "inference_time_seconds": 0.026187083014519885
+      "inference_time_seconds": 0.02511062502162531
     },
     "in_distribution_origin|conditional_constant|guidance_margin|0.0": {
       "scenario": "in_distribution_origin",
@@ -1604,7 +1604,7 @@
       "min_distance_to_obstacle": 0.19189859926700592,
       "smoothness": 0.3165639042854309,
       "path_length": 18.30823516845703,
-      "inference_time_seconds": 0.025618957995902747
+      "inference_time_seconds": 0.02594841699465178
     },
     "in_distribution_origin|constant|guidance_margin|0.25": {
       "scenario": "in_distribution_origin",
@@ -1616,7 +1616,7 @@
       "min_distance_to_obstacle": 0.3053533732891083,
       "smoothness": 0.3367636799812317,
       "path_length": 18.591981887817383,
-      "inference_time_seconds": 0.025591625017113984
+      "inference_time_seconds": 0.02563645801274106
     },
     "in_distribution_origin|conditional_constant|guidance_margin|0.25": {
       "scenario": "in_distribution_origin",
@@ -1628,7 +1628,7 @@
       "min_distance_to_obstacle": 0.29145389795303345,
       "smoothness": 0.36123934388160706,
       "path_length": 19.061180114746094,
-      "inference_time_seconds": 0.025902709021465853
+      "inference_time_seconds": 0.025210332998540252
     },
     "in_distribution_origin|constant|guidance_margin|0.5": {
       "scenario": "in_distribution_origin",
@@ -1640,7 +1640,7 @@
       "min_distance_to_obstacle": 0.4107174575328827,
       "smoothness": 0.41679590940475464,
       "path_length": 19.862430572509766,
-      "inference_time_seconds": 0.026481457985937595
+      "inference_time_seconds": 0.02604795800289139
     },
     "in_distribution_origin|conditional_constant|guidance_margin|0.5": {
       "scenario": "in_distribution_origin",
@@ -1652,7 +1652,7 @@
       "min_distance_to_obstacle": 0.3447907269001007,
       "smoothness": 0.44771480560302734,
       "path_length": 20.415393829345703,
-      "inference_time_seconds": 0.026955042005283758
+      "inference_time_seconds": 0.025046249997103587
     },
     "in_distribution_origin|constant|guidance_margin|0.75": {
       "scenario": "in_distribution_origin",
@@ -1664,7 +1664,7 @@
       "min_distance_to_obstacle": 0.2881409227848053,
       "smoothness": 0.5602984428405762,
       "path_length": 21.935876846313477,
-      "inference_time_seconds": 0.026063834025990218
+      "inference_time_seconds": 0.025437458010856062
     },
     "in_distribution_origin|conditional_constant|guidance_margin|0.75": {
       "scenario": "in_distribution_origin",
@@ -1676,7 +1676,7 @@
       "min_distance_to_obstacle": 0.3931073546409607,
       "smoothness": 0.6020399332046509,
       "path_length": 22.60301971435547,
-      "inference_time_seconds": 0.026071000000229105
+      "inference_time_seconds": 0.026517041987972334
     },
     "in_distribution_origin|constant|guidance_margin|1.0": {
       "scenario": "in_distribution_origin",
@@ -1688,7 +1688,7 @@
       "min_distance_to_obstacle": 0.3840453028678894,
       "smoothness": 0.8083569407463074,
       "path_length": 25.0986328125,
-      "inference_time_seconds": 0.02537712501361966
+      "inference_time_seconds": 0.02575062500545755
     },
     "in_distribution_origin|conditional_constant|guidance_margin|1.0": {
       "scenario": "in_distribution_origin",
@@ -1700,7 +1700,7 @@
       "min_distance_to_obstacle": 0.45869308710098267,
       "smoothness": 0.8698216676712036,
       "path_length": 25.938474655151367,
-      "inference_time_seconds": 0.026013499998953193
+      "inference_time_seconds": 0.025117459008470178
     },
     "in_distribution_origin|constant|guidance_margin|1.25": {
       "scenario": "in_distribution_origin",
@@ -1712,7 +1712,7 @@
       "min_distance_to_obstacle": 0.44069746136665344,
       "smoothness": 1.2312783002853394,
       "path_length": 29.714862823486328,
-      "inference_time_seconds": 0.026281333004590124
+      "inference_time_seconds": 0.025851332989986986
     },
     "in_distribution_origin|conditional_constant|guidance_margin|1.25": {
       "scenario": "in_distribution_origin",
@@ -1724,7 +1724,7 @@
       "min_distance_to_obstacle": 0.44507381319999695,
       "smoothness": 1.3325709104537964,
       "path_length": 30.827991485595703,
-      "inference_time_seconds": 0.025809000013396144
+      "inference_time_seconds": 0.02369579201331362
     },
     "in_distribution_origin|constant|guidance_margin|1.5": {
       "scenario": "in_distribution_origin",
@@ -1736,7 +1736,7 @@
       "min_distance_to_obstacle": 0.35918477177619934,
       "smoothness": 1.9581406116485596,
       "path_length": 36.26751708984375,
-      "inference_time_seconds": 0.026615582988597453
+      "inference_time_seconds": 0.02576724998652935
     },
     "in_distribution_origin|conditional_constant|guidance_margin|1.5": {
       "scenario": "in_distribution_origin",
@@ -1748,7 +1748,7 @@
       "min_distance_to_obstacle": 0.645522952079773,
       "smoothness": 2.152188539505005,
       "path_length": 37.91421127319336,
-      "inference_time_seconds": 0.02588258299510926
+      "inference_time_seconds": 0.026827958005014807
     },
     "in_distribution_origin|constant|guidance_margin|1.75": {
       "scenario": "in_distribution_origin",
@@ -1760,7 +1760,7 @@
       "min_distance_to_obstacle": 0.49097326397895813,
       "smoothness": 3.212198495864868,
       "path_length": 45.323638916015625,
-      "inference_time_seconds": 0.025582749978639185
+      "inference_time_seconds": 0.02617562498198822
     },
     "in_distribution_origin|conditional_constant|guidance_margin|1.75": {
       "scenario": "in_distribution_origin",
@@ -1772,7 +1772,7 @@
       "min_distance_to_obstacle": 0.7338045835494995,
       "smoothness": 3.641376256942749,
       "path_length": 48.10786056518555,
-      "inference_time_seconds": 0.02604445899487473
+      "inference_time_seconds": 0.02577183401444927
     },
     "in_distribution_origin|constant|guidance_margin|2.0": {
       "scenario": "in_distribution_origin",
@@ -1784,7 +1784,7 @@
       "min_distance_to_obstacle": 0.6567025184631348,
       "smoothness": 5.336719512939453,
       "path_length": 57.46892547607422,
-      "inference_time_seconds": 0.02585366601124406
+      "inference_time_seconds": 0.026285333005944267
     },
     "in_distribution_origin|conditional_constant|guidance_margin|2.0": {
       "scenario": "in_distribution_origin",
@@ -1796,7 +1796,7 @@
       "min_distance_to_obstacle": 0.7397531270980835,
       "smoothness": 6.2730793952941895,
       "path_length": 62.14741134643555,
-      "inference_time_seconds": 0.025431458023376763
+      "inference_time_seconds": 0.02453458300442435
     },
     "in_distribution_origin|constant|guidance_margin|2.5": {
       "scenario": "in_distribution_origin",
@@ -1808,7 +1808,7 @@
       "min_distance_to_obstacle": 0.8358118534088135,
       "smoothness": 14.120872497558594,
       "path_length": 92.43869018554688,
-      "inference_time_seconds": 0.02585637499578297
+      "inference_time_seconds": 0.02514254199923016
     },
     "in_distribution_origin|conditional_constant|guidance_margin|2.5": {
       "scenario": "in_distribution_origin",
@@ -1820,7 +1820,7 @@
       "min_distance_to_obstacle": 0.5387855172157288,
       "smoothness": 16.71122169494629,
       "path_length": 101.23213958740234,
-      "inference_time_seconds": 0.026111625018529594
+      "inference_time_seconds": 0.025942917010979727
     },
     "in_distribution_origin|distance_gated|guidance_margin|0.0": {
       "scenario": "in_distribution_origin",
@@ -1832,7 +1832,7 @@
       "min_distance_to_obstacle": 0.2231614887714386,
       "smoothness": 0.295381098985672,
       "path_length": 17.887834548950195,
-      "inference_time_seconds": 0.03116016701096669
+      "inference_time_seconds": 0.031065249990206212
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|0.0": {
       "scenario": "in_distribution_origin",
@@ -1844,7 +1844,7 @@
       "min_distance_to_obstacle": 0.19189859926700592,
       "smoothness": 0.3165639042854309,
       "path_length": 18.30823516845703,
-      "inference_time_seconds": 0.028009874979034066
+      "inference_time_seconds": 0.027227832993958145
     },
     "in_distribution_origin|distance_gated|guidance_margin|0.25": {
       "scenario": "in_distribution_origin",
@@ -1856,7 +1856,7 @@
       "min_distance_to_obstacle": 0.31099969148635864,
       "smoothness": 0.33348843455314636,
       "path_length": 18.529335021972656,
-      "inference_time_seconds": 0.028273792006075382
+      "inference_time_seconds": 0.028432291990611702
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|0.25": {
       "scenario": "in_distribution_origin",
@@ -1868,7 +1868,7 @@
       "min_distance_to_obstacle": 0.29166722297668457,
       "smoothness": 0.35759976506233215,
       "path_length": 18.992448806762695,
-      "inference_time_seconds": 0.027880749985342845
+      "inference_time_seconds": 0.028143125004135072
     },
     "in_distribution_origin|distance_gated|guidance_margin|0.5": {
       "scenario": "in_distribution_origin",
@@ -1880,7 +1880,7 @@
       "min_distance_to_obstacle": 0.412131667137146,
       "smoothness": 0.3970736861228943,
       "path_length": 19.527076721191406,
-      "inference_time_seconds": 0.02728400001069531
+      "inference_time_seconds": 0.02824345900444314
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|0.5": {
       "scenario": "in_distribution_origin",
@@ -1892,7 +1892,7 @@
       "min_distance_to_obstacle": 0.3372715413570404,
       "smoothness": 0.4259101450443268,
       "path_length": 20.052621841430664,
-      "inference_time_seconds": 0.027500666998093948
+      "inference_time_seconds": 0.028054166992660612
     },
     "in_distribution_origin|distance_gated|guidance_margin|0.75": {
       "scenario": "in_distribution_origin",
@@ -1904,7 +1904,7 @@
       "min_distance_to_obstacle": 0.37779879570007324,
       "smoothness": 0.49539437890052795,
       "path_length": 20.967512130737305,
-      "inference_time_seconds": 0.02692654199199751
+      "inference_time_seconds": 0.027396291989134625
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|0.75": {
       "scenario": "in_distribution_origin",
@@ -1916,7 +1916,7 @@
       "min_distance_to_obstacle": 0.39348334074020386,
       "smoothness": 0.5311272144317627,
       "path_length": 21.571170806884766,
-      "inference_time_seconds": 0.027176792005775496
+      "inference_time_seconds": 0.026826999994227663
     },
     "in_distribution_origin|distance_gated|guidance_margin|1.0": {
       "scenario": "in_distribution_origin",
@@ -1928,7 +1928,7 @@
       "min_distance_to_obstacle": 0.37110355496406555,
       "smoothness": 0.6428506970405579,
       "path_length": 22.96038246154785,
-      "inference_time_seconds": 0.02787345799151808
+      "inference_time_seconds": 0.027754791983170435
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|1.0": {
       "scenario": "in_distribution_origin",
@@ -1940,7 +1940,7 @@
       "min_distance_to_obstacle": 0.5466184616088867,
       "smoothness": 0.6889886260032654,
       "path_length": 23.668561935424805,
-      "inference_time_seconds": 0.02744949999032542
+      "inference_time_seconds": 0.027640499989502132
     },
     "in_distribution_origin|distance_gated|guidance_margin|1.25": {
       "scenario": "in_distribution_origin",
@@ -1952,7 +1952,7 @@
       "min_distance_to_obstacle": 0.4853827655315399,
       "smoothness": 0.8618427515029907,
       "path_length": 25.64415168762207,
-      "inference_time_seconds": 0.028151124977739528
+      "inference_time_seconds": 0.02732937497785315
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|1.25": {
       "scenario": "in_distribution_origin",
@@ -1964,7 +1964,7 @@
       "min_distance_to_obstacle": 0.5226172804832458,
       "smoothness": 0.9249538779258728,
       "path_length": 26.497268676757812,
-      "inference_time_seconds": 0.028098083013901487
+      "inference_time_seconds": 0.027709584013791755
     },
     "in_distribution_origin|distance_gated|guidance_margin|1.5": {
       "scenario": "in_distribution_origin",
@@ -1976,7 +1976,7 @@
       "min_distance_to_obstacle": 0.5520942211151123,
       "smoothness": 1.1874269247055054,
       "path_length": 29.191917419433594,
-      "inference_time_seconds": 0.02798745798645541
+      "inference_time_seconds": 0.027709583984687924
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|1.5": {
       "scenario": "in_distribution_origin",
@@ -1988,7 +1988,7 @@
       "min_distance_to_obstacle": 0.48452284932136536,
       "smoothness": 1.2798571586608887,
       "path_length": 30.252296447753906,
-      "inference_time_seconds": 0.028240709012607113
+      "inference_time_seconds": 0.029509790998417884
     },
     "in_distribution_origin|distance_gated|guidance_margin|1.75": {
       "scenario": "in_distribution_origin",
@@ -2000,7 +2000,7 @@
       "min_distance_to_obstacle": 0.5187446475028992,
       "smoothness": 1.676155924797058,
       "path_length": 33.82171630859375,
-      "inference_time_seconds": 0.028420499991625547
+      "inference_time_seconds": 0.02779454199480824
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|1.75": {
       "scenario": "in_distribution_origin",
@@ -2012,7 +2012,7 @@
       "min_distance_to_obstacle": 0.6851574182510376,
       "smoothness": 1.8232946395874023,
       "path_length": 35.218605041503906,
-      "inference_time_seconds": 0.02833558397833258
+      "inference_time_seconds": 0.026564208994386718
     },
     "in_distribution_origin|distance_gated|guidance_margin|2.0": {
       "scenario": "in_distribution_origin",
@@ -2024,7 +2024,7 @@
       "min_distance_to_obstacle": 0.6033108234405518,
       "smoothness": 2.4153499603271484,
       "path_length": 39.785037994384766,
-      "inference_time_seconds": 0.028182917012600228
+      "inference_time_seconds": 0.027720833983039483
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|2.0": {
       "scenario": "in_distribution_origin",
@@ -2036,7 +2036,7 @@
       "min_distance_to_obstacle": 0.8475447297096252,
       "smoothness": 2.6731934547424316,
       "path_length": 41.790706634521484,
-      "inference_time_seconds": 0.028187082993099466
+      "inference_time_seconds": 0.028014082985464483
     },
     "in_distribution_origin|distance_gated|guidance_margin|2.5": {
       "scenario": "in_distribution_origin",
@@ -2048,7 +2048,7 @@
       "min_distance_to_obstacle": 0.5785969495773315,
       "smoothness": 5.182753086090088,
       "path_length": 56.74604797363281,
-      "inference_time_seconds": 0.027598290995229036
+      "inference_time_seconds": 0.028317083982983604
     },
     "in_distribution_origin|conditional_distance_gated|guidance_margin|2.5": {
       "scenario": "in_distribution_origin",
@@ -2060,7 +2060,7 @@
       "min_distance_to_obstacle": 0.563119649887085,
       "smoothness": 6.064924716949463,
       "path_length": 61.275360107421875,
-      "inference_time_seconds": 0.03987316699931398
+      "inference_time_seconds": 0.02723737497581169
     },
     "ood_shifted_y|baseline|guidance_margin|0.0": {
       "scenario": "ood_shifted_y",
@@ -2072,7 +2072,7 @@
       "min_distance_to_obstacle": 0.0766620934009552,
       "smoothness": 0.26924341917037964,
       "path_length": 17.414791107177734,
-      "inference_time_seconds": 0.021756041009211913
+      "inference_time_seconds": 0.03033837501425296
     },
     "ood_shifted_y|conditional|guidance_margin|0.0": {
       "scenario": "ood_shifted_y",
@@ -2084,7 +2084,7 @@
       "min_distance_to_obstacle": 0.05698603764176369,
       "smoothness": 0.2862992584705353,
       "path_length": 17.774051666259766,
-      "inference_time_seconds": 0.021963167004287243
+      "inference_time_seconds": 0.0240057920163963
     },
     "ood_shifted_y|constant|guidance_margin|0.0": {
       "scenario": "ood_shifted_y",
@@ -2096,7 +2096,7 @@
       "min_distance_to_obstacle": 0.21720543503761292,
       "smoothness": 0.27550336718559265,
       "path_length": 17.50625228881836,
-      "inference_time_seconds": 0.026432333019329235
+      "inference_time_seconds": 0.02495654101949185
     },
     "ood_shifted_y|conditional_constant|guidance_margin|0.0": {
       "scenario": "ood_shifted_y",
@@ -2108,7 +2108,7 @@
       "min_distance_to_obstacle": 0.3208937346935272,
       "smoothness": 0.2906443178653717,
       "path_length": 17.831863403320312,
-      "inference_time_seconds": 0.02770229201996699
+      "inference_time_seconds": 0.02529479199438356
     },
     "ood_shifted_y|constant|guidance_margin|0.25": {
       "scenario": "ood_shifted_y",
@@ -2120,7 +2120,7 @@
       "min_distance_to_obstacle": 0.2706383168697357,
       "smoothness": 0.2853354215621948,
       "path_length": 17.637727737426758,
-      "inference_time_seconds": 0.02787362501840107
+      "inference_time_seconds": 0.026506499998504296
     },
     "ood_shifted_y|conditional_constant|guidance_margin|0.25": {
       "scenario": "ood_shifted_y",
@@ -2132,7 +2132,7 @@
       "min_distance_to_obstacle": 0.40228497982025146,
       "smoothness": 0.2977874279022217,
       "path_length": 17.925121307373047,
-      "inference_time_seconds": 0.02671741700032726
+      "inference_time_seconds": 0.02686604199698195
     },
     "ood_shifted_y|constant|guidance_margin|0.5": {
       "scenario": "ood_shifted_y",
@@ -2144,7 +2144,7 @@
       "min_distance_to_obstacle": 0.2982093393802643,
       "smoothness": 0.30263668298721313,
       "path_length": 17.864765167236328,
-      "inference_time_seconds": 0.026051291992189363
+      "inference_time_seconds": 0.025374916003784165
     },
     "ood_shifted_y|conditional_constant|guidance_margin|0.5": {
       "scenario": "ood_shifted_y",
@@ -2156,7 +2156,7 @@
       "min_distance_to_obstacle": 0.40442904829978943,
       "smoothness": 0.3105297088623047,
       "path_length": 18.09131622314453,
-      "inference_time_seconds": 0.026541250001173466
+      "inference_time_seconds": 0.0260358749947045
     },
     "ood_shifted_y|constant|guidance_margin|0.75": {
       "scenario": "ood_shifted_y",
@@ -2168,7 +2168,7 @@
       "min_distance_to_obstacle": 0.3386619985103607,
       "smoothness": 0.32823726534843445,
       "path_length": 18.204072952270508,
-      "inference_time_seconds": 0.025711334019433707
+      "inference_time_seconds": 0.025855125015368685
     },
     "ood_shifted_y|conditional_constant|guidance_margin|0.75": {
       "scenario": "ood_shifted_y",
@@ -2180,7 +2180,7 @@
       "min_distance_to_obstacle": 0.5191863179206848,
       "smoothness": 0.330352246761322,
       "path_length": 18.363492965698242,
-      "inference_time_seconds": 0.02575583299039863
+      "inference_time_seconds": 0.025458250020164996
     },
     "ood_shifted_y|constant|guidance_margin|1.0": {
       "scenario": "ood_shifted_y",
@@ -2192,7 +2192,7 @@
       "min_distance_to_obstacle": 0.6156240701675415,
       "smoothness": 0.36155223846435547,
       "path_length": 18.665979385375977,
-      "inference_time_seconds": 0.027039167005568743
+      "inference_time_seconds": 0.025780416995985433
     },
     "ood_shifted_y|conditional_constant|guidance_margin|1.0": {
       "scenario": "ood_shifted_y",
@@ -2204,7 +2204,7 @@
       "min_distance_to_obstacle": 0.6637147068977356,
       "smoothness": 0.35947516560554504,
       "path_length": 18.78769874572754,
-      "inference_time_seconds": 0.030682082986459136
+      "inference_time_seconds": 0.027061208005761728
     },
     "ood_shifted_y|constant|guidance_margin|1.25": {
       "scenario": "ood_shifted_y",
@@ -2216,7 +2216,7 @@
       "min_distance_to_obstacle": 0.6031360626220703,
       "smoothness": 0.40205448865890503,
       "path_length": 19.27265167236328,
-      "inference_time_seconds": 0.028264417022000998
+      "inference_time_seconds": 0.026437292021000758
     },
     "ood_shifted_y|conditional_constant|guidance_margin|1.25": {
       "scenario": "ood_shifted_y",
@@ -2228,7 +2228,7 @@
       "min_distance_to_obstacle": 0.8619628548622131,
       "smoothness": 0.3992951214313507,
       "path_length": 19.400022506713867,
-      "inference_time_seconds": 0.026866416999837384
+      "inference_time_seconds": 0.025627333990996704
     },
     "ood_shifted_y|constant|guidance_margin|1.5": {
       "scenario": "ood_shifted_y",
@@ -2240,7 +2240,7 @@
       "min_distance_to_obstacle": 0.8016138672828674,
       "smoothness": 0.4544532001018524,
       "path_length": 20.090309143066406,
-      "inference_time_seconds": 0.02578370799892582
+      "inference_time_seconds": 0.02608741697622463
     },
     "ood_shifted_y|conditional_constant|guidance_margin|1.5": {
       "scenario": "ood_shifted_y",
@@ -2252,7 +2252,7 @@
       "min_distance_to_obstacle": 1.1620252132415771,
       "smoothness": 0.4535774290561676,
       "path_length": 20.246355056762695,
-      "inference_time_seconds": 0.026431625010445714
+      "inference_time_seconds": 0.02648745902115479
     },
     "ood_shifted_y|constant|guidance_margin|1.75": {
       "scenario": "ood_shifted_y",
@@ -2264,7 +2264,7 @@
       "min_distance_to_obstacle": 1.022306203842163,
       "smoothness": 0.5239454507827759,
       "path_length": 21.194578170776367,
-      "inference_time_seconds": 0.026325208018533885
+      "inference_time_seconds": 0.025165457976981997
     },
     "ood_shifted_y|conditional_constant|guidance_margin|1.75": {
       "scenario": "ood_shifted_y",
@@ -2276,7 +2276,7 @@
       "min_distance_to_obstacle": 1.3787431716918945,
       "smoothness": 0.5285151600837708,
       "path_length": 21.373037338256836,
-      "inference_time_seconds": 0.026652125001419336
+      "inference_time_seconds": 0.024608250008895993
     },
     "ood_shifted_y|constant|guidance_margin|2.0": {
       "scenario": "ood_shifted_y",
@@ -2288,7 +2288,7 @@
       "min_distance_to_obstacle": 1.418067216873169,
       "smoothness": 0.624947726726532,
       "path_length": 22.693592071533203,
-      "inference_time_seconds": 0.02615583298029378
+      "inference_time_seconds": 0.025759082986041903
     },
     "ood_shifted_y|conditional_constant|guidance_margin|2.0": {
       "scenario": "ood_shifted_y",
@@ -2300,7 +2300,7 @@
       "min_distance_to_obstacle": 1.7554203271865845,
       "smoothness": 0.6323927640914917,
       "path_length": 22.859386444091797,
-      "inference_time_seconds": 0.026465333998203278
+      "inference_time_seconds": 0.02768354199361056
     },
     "ood_shifted_y|constant|guidance_margin|2.5": {
       "scenario": "ood_shifted_y",
@@ -2312,7 +2312,7 @@
       "min_distance_to_obstacle": 1.291290521621704,
       "smoothness": 0.9969680905342102,
       "path_length": 27.38162612915039,
-      "inference_time_seconds": 0.028901959012728184
+      "inference_time_seconds": 0.025668749993201345
     },
     "ood_shifted_y|conditional_constant|guidance_margin|2.5": {
       "scenario": "ood_shifted_y",
@@ -2324,7 +2324,7 @@
       "min_distance_to_obstacle": 2.1890389919281006,
       "smoothness": 1.0014760494232178,
       "path_length": 27.317434310913086,
-      "inference_time_seconds": 0.02743437499157153
+      "inference_time_seconds": 0.024312583002028987
     },
     "ood_shifted_y|distance_gated|guidance_margin|0.0": {
       "scenario": "ood_shifted_y",
@@ -2336,7 +2336,7 @@
       "min_distance_to_obstacle": 0.21720543503761292,
       "smoothness": 0.27550336718559265,
       "path_length": 17.50625228881836,
-      "inference_time_seconds": 0.030224917019950226
+      "inference_time_seconds": 0.02882287499960512
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|0.0": {
       "scenario": "ood_shifted_y",
@@ -2348,7 +2348,7 @@
       "min_distance_to_obstacle": 0.3208937346935272,
       "smoothness": 0.2906443178653717,
       "path_length": 17.831863403320312,
-      "inference_time_seconds": 0.029257000016514212
+      "inference_time_seconds": 0.027741041994886473
     },
     "ood_shifted_y|distance_gated|guidance_margin|0.25": {
       "scenario": "ood_shifted_y",
@@ -2360,7 +2360,7 @@
       "min_distance_to_obstacle": 0.2788245379924774,
       "smoothness": 0.28500819206237793,
       "path_length": 17.63364601135254,
-      "inference_time_seconds": 0.028553958982229233
+      "inference_time_seconds": 0.02807800000300631
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|0.25": {
       "scenario": "ood_shifted_y",
@@ -2372,7 +2372,7 @@
       "min_distance_to_obstacle": 0.4000915586948395,
       "smoothness": 0.2976575493812561,
       "path_length": 17.924301147460938,
-      "inference_time_seconds": 0.030307292006909847
+      "inference_time_seconds": 0.02817183401202783
     },
     "ood_shifted_y|distance_gated|guidance_margin|0.5": {
       "scenario": "ood_shifted_y",
@@ -2384,7 +2384,7 @@
       "min_distance_to_obstacle": 0.2893693447113037,
       "smoothness": 0.29983851313591003,
       "path_length": 17.82532501220703,
-      "inference_time_seconds": 0.028791290998924524
+      "inference_time_seconds": 0.02699779099202715
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|0.5": {
       "scenario": "ood_shifted_y",
@@ -2396,7 +2396,7 @@
       "min_distance_to_obstacle": 0.46225982904434204,
       "smoothness": 0.30865636467933655,
       "path_length": 18.066808700561523,
-      "inference_time_seconds": 0.02830654100398533
+      "inference_time_seconds": 0.02807591698365286
     },
     "ood_shifted_y|distance_gated|guidance_margin|0.75": {
       "scenario": "ood_shifted_y",
@@ -2408,7 +2408,7 @@
       "min_distance_to_obstacle": 0.3242260813713074,
       "smoothness": 0.31974706053733826,
       "path_length": 18.07767105102539,
-      "inference_time_seconds": 0.02857016702182591
+      "inference_time_seconds": 0.027980874991044402
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|0.75": {
       "scenario": "ood_shifted_y",
@@ -2420,7 +2420,7 @@
       "min_distance_to_obstacle": 0.4412676692008972,
       "smoothness": 0.323651522397995,
       "path_length": 18.26154327392578,
-      "inference_time_seconds": 0.027863249997608364
+      "inference_time_seconds": 0.028375082998536527
     },
     "ood_shifted_y|distance_gated|guidance_margin|1.0": {
       "scenario": "ood_shifted_y",
@@ -2432,7 +2432,7 @@
       "min_distance_to_obstacle": 0.4882516860961914,
       "smoothness": 0.34368792176246643,
       "path_length": 18.389474868774414,
-      "inference_time_seconds": 0.027944041998125613
+      "inference_time_seconds": 0.026908208994427696
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|1.0": {
       "scenario": "ood_shifted_y",
@@ -2444,7 +2444,7 @@
       "min_distance_to_obstacle": 0.6284921765327454,
       "smoothness": 0.34266409277915955,
       "path_length": 18.524457931518555,
-      "inference_time_seconds": 0.027722124999854714
+      "inference_time_seconds": 0.02657304098829627
     },
     "ood_shifted_y|distance_gated|guidance_margin|1.25": {
       "scenario": "ood_shifted_y",
@@ -2456,7 +2456,7 @@
       "min_distance_to_obstacle": 0.6322205066680908,
       "smoothness": 0.37105944752693176,
       "path_length": 18.767499923706055,
-      "inference_time_seconds": 0.027763334015617147
+      "inference_time_seconds": 0.02949462499236688
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|1.25": {
       "scenario": "ood_shifted_y",
@@ -2468,7 +2468,7 @@
       "min_distance_to_obstacle": 0.7754068970680237,
       "smoothness": 0.3669092655181885,
       "path_length": 18.877492904663086,
-      "inference_time_seconds": 0.027776041999459267
+      "inference_time_seconds": 0.028182458016090095
     },
     "ood_shifted_y|distance_gated|guidance_margin|1.5": {
       "scenario": "ood_shifted_y",
@@ -2480,7 +2480,7 @@
       "min_distance_to_obstacle": 0.6427526473999023,
       "smoothness": 0.4021562933921814,
       "path_length": 19.229820251464844,
-      "inference_time_seconds": 0.02828474997659214
+      "inference_time_seconds": 0.028482000023359433
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|1.5": {
       "scenario": "ood_shifted_y",
@@ -2492,7 +2492,7 @@
       "min_distance_to_obstacle": 0.9273392558097839,
       "smoothness": 0.3976892828941345,
       "path_length": 19.347909927368164,
-      "inference_time_seconds": 0.02758883300703019
+      "inference_time_seconds": 0.027323290996719152
     },
     "ood_shifted_y|distance_gated|guidance_margin|1.75": {
       "scenario": "ood_shifted_y",
@@ -2504,7 +2504,7 @@
       "min_distance_to_obstacle": 0.7768191695213318,
       "smoothness": 0.44029679894447327,
       "path_length": 19.820241928100586,
-      "inference_time_seconds": 0.028233583987457678
+      "inference_time_seconds": 0.028385167010128498
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|1.75": {
       "scenario": "ood_shifted_y",
@@ -2516,7 +2516,7 @@
       "min_distance_to_obstacle": 1.1098345518112183,
       "smoothness": 0.4377281963825226,
       "path_length": 19.9709415435791,
-      "inference_time_seconds": 0.027905916998861358
+      "inference_time_seconds": 0.028079749987227842
     },
     "ood_shifted_y|distance_gated|guidance_margin|2.0": {
       "scenario": "ood_shifted_y",
@@ -2528,7 +2528,7 @@
       "min_distance_to_obstacle": 0.48362991213798523,
       "smoothness": 0.4882177710533142,
       "path_length": 20.5759220123291,
-      "inference_time_seconds": 0.03376454199315049
+      "inference_time_seconds": 0.027612459001829848
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|2.0": {
       "scenario": "ood_shifted_y",
@@ -2540,7 +2540,7 @@
       "min_distance_to_obstacle": 1.325529932975769,
       "smoothness": 0.4897518754005432,
       "path_length": 20.757308959960938,
-      "inference_time_seconds": 0.02777691700612195
+      "inference_time_seconds": 0.02818166700308211
     },
     "ood_shifted_y|distance_gated|guidance_margin|2.5": {
       "scenario": "ood_shifted_y",
@@ -2552,7 +2552,7 @@
       "min_distance_to_obstacle": 1.3278875350952148,
       "smoothness": 0.630458414554596,
       "path_length": 22.73673439025879,
-      "inference_time_seconds": 0.028094500012230128
+      "inference_time_seconds": 0.02818991700769402
     },
     "ood_shifted_y|conditional_distance_gated|guidance_margin|2.5": {
       "scenario": "ood_shifted_y",
@@ -2564,7 +2564,7 @@
       "min_distance_to_obstacle": 1.3714232444763184,
       "smoothness": 0.6429080963134766,
       "path_length": 22.94394874572754,
-      "inference_time_seconds": 0.02747458399971947
+      "inference_time_seconds": 0.027783875004388392
     },
     "ood_double_gap|baseline|guidance_margin|0.0": {
       "scenario": "ood_double_gap",
@@ -2576,7 +2576,7 @@
       "min_distance_to_obstacle": 0.06087086722254753,
       "smoothness": 0.26924341917037964,
       "path_length": 17.414791107177734,
-      "inference_time_seconds": 0.022047707985620946
+      "inference_time_seconds": 0.022717750020092353
     },
     "ood_double_gap|conditional|guidance_margin|0.0": {
       "scenario": "ood_double_gap",
@@ -2588,7 +2588,7 @@
       "min_distance_to_obstacle": 0.05026482045650482,
       "smoothness": 0.29152047634124756,
       "path_length": 17.90506362915039,
-      "inference_time_seconds": 0.022613834007643163
+      "inference_time_seconds": 0.023827917000744492
     },
     "ood_double_gap|constant|guidance_margin|0.0": {
       "scenario": "ood_double_gap",
@@ -2600,7 +2600,7 @@
       "min_distance_to_obstacle": 0.1619475781917572,
       "smoothness": 0.282081663608551,
       "path_length": 17.60692024230957,
-      "inference_time_seconds": 0.027635417005512863
+      "inference_time_seconds": 0.02794595799059607
     },
     "ood_double_gap|conditional_constant|guidance_margin|0.0": {
       "scenario": "ood_double_gap",
@@ -2612,7 +2612,7 @@
       "min_distance_to_obstacle": 0.23899434506893158,
       "smoothness": 0.3013303875923157,
       "path_length": 18.03957176208496,
-      "inference_time_seconds": 0.028153417020803317
+      "inference_time_seconds": 0.02827233399148099
     },
     "ood_double_gap|constant|guidance_margin|0.25": {
       "scenario": "ood_double_gap",
@@ -2624,7 +2624,7 @@
       "min_distance_to_obstacle": 0.2792123556137085,
       "smoothness": 0.30153074860572815,
       "path_length": 17.88116455078125,
-      "inference_time_seconds": 0.028185167000629008
+      "inference_time_seconds": 0.02687800000421703
     },
     "ood_double_gap|conditional_constant|guidance_margin|0.25": {
       "scenario": "ood_double_gap",
@@ -2636,7 +2636,7 @@
       "min_distance_to_obstacle": 0.301728755235672,
       "smoothness": 0.31687256693840027,
       "path_length": 18.25080108642578,
-      "inference_time_seconds": 0.028491250006482005
+      "inference_time_seconds": 0.027729665976949036
     },
     "ood_double_gap|constant|guidance_margin|0.5": {
       "scenario": "ood_double_gap",
@@ -2648,7 +2648,7 @@
       "min_distance_to_obstacle": 0.39354267716407776,
       "smoothness": 0.33870837092399597,
       "path_length": 18.401185989379883,
-      "inference_time_seconds": 0.028304040984949097
+      "inference_time_seconds": 0.027635375008685514
     },
     "ood_double_gap|conditional_constant|guidance_margin|0.5": {
       "scenario": "ood_double_gap",
@@ -2660,7 +2660,7 @@
       "min_distance_to_obstacle": 0.378243088722229,
       "smoothness": 0.3480673134326935,
       "path_length": 18.681364059448242,
-      "inference_time_seconds": 0.027972625015536323
+      "inference_time_seconds": 0.027407499990658835
     },
     "ood_double_gap|constant|guidance_margin|0.75": {
       "scenario": "ood_double_gap",
@@ -2672,7 +2672,7 @@
       "min_distance_to_obstacle": 0.26623305678367615,
       "smoothness": 0.40391048789024353,
       "path_length": 19.309938430786133,
-      "inference_time_seconds": 0.028394791996106505
+      "inference_time_seconds": 0.028392957989126444
     },
     "ood_double_gap|conditional_constant|guidance_margin|0.75": {
       "scenario": "ood_double_gap",
@@ -2684,7 +2684,7 @@
       "min_distance_to_obstacle": 0.5251984000205994,
       "smoothness": 0.4062056541442871,
       "path_length": 19.493833541870117,
-      "inference_time_seconds": 0.08290045900503173
+      "inference_time_seconds": 0.05094099999405444
     },
     "ood_double_gap|constant|guidance_margin|1.0": {
       "scenario": "ood_double_gap",
@@ -2696,7 +2696,7 @@
       "min_distance_to_obstacle": 0.5537791848182678,
       "smoothness": 0.5215319395065308,
       "path_length": 20.90853500366211,
-      "inference_time_seconds": 0.04011570801958442
+      "inference_time_seconds": 0.0576126659871079
     },
     "ood_double_gap|conditional_constant|guidance_margin|1.0": {
       "scenario": "ood_double_gap",
@@ -2708,7 +2708,7 @@
       "min_distance_to_obstacle": 0.5483592748641968,
       "smoothness": 0.5173870325088501,
       "path_length": 21.01310920715332,
-      "inference_time_seconds": 0.029060833010589704
+      "inference_time_seconds": 0.03750320800463669
     },
     "ood_double_gap|constant|guidance_margin|1.25": {
       "scenario": "ood_double_gap",
@@ -2720,7 +2720,7 @@
       "min_distance_to_obstacle": 0.517054557800293,
       "smoothness": 0.7715689539909363,
       "path_length": 23.94199562072754,
-      "inference_time_seconds": 0.0271112080081366
+      "inference_time_seconds": 0.037601124990032986
     },
     "ood_double_gap|conditional_constant|guidance_margin|1.25": {
       "scenario": "ood_double_gap",
@@ -2732,7 +2732,7 @@
       "min_distance_to_obstacle": 0.47566619515419006,
       "smoothness": 0.7560935020446777,
       "path_length": 23.946548461914062,
-      "inference_time_seconds": 0.029034750012215227
+      "inference_time_seconds": 0.03090291700209491
     },
     "ood_double_gap|constant|guidance_margin|1.5": {
       "scenario": "ood_double_gap",
@@ -2744,7 +2744,7 @@
       "min_distance_to_obstacle": 0.536314070224762,
       "smoothness": 1.3351988792419434,
       "path_length": 29.569726943969727,
-      "inference_time_seconds": 0.02989070798503235
+      "inference_time_seconds": 0.02705491697997786
     },
     "ood_double_gap|conditional_constant|guidance_margin|1.5": {
       "scenario": "ood_double_gap",
@@ -2756,7 +2756,7 @@
       "min_distance_to_obstacle": 0.5366582870483398,
       "smoothness": 1.300836443901062,
       "path_length": 29.466835021972656,
-      "inference_time_seconds": 0.032158416986931115
+      "inference_time_seconds": 0.0319593750173226
     },
     "ood_double_gap|constant|guidance_margin|1.75": {
       "scenario": "ood_double_gap",
@@ -2768,7 +2768,7 @@
       "min_distance_to_obstacle": 0.5660074949264526,
       "smoothness": 2.6180431842803955,
       "path_length": 39.475303649902344,
-      "inference_time_seconds": 0.030285041022580117
+      "inference_time_seconds": 0.029196749994298443
     },
     "ood_double_gap|conditional_constant|guidance_margin|1.75": {
       "scenario": "ood_double_gap",
@@ -2780,7 +2780,7 @@
       "min_distance_to_obstacle": 0.6288452744483948,
       "smoothness": 2.599647045135498,
       "path_length": 39.618038177490234,
-      "inference_time_seconds": 0.033108709001680836
+      "inference_time_seconds": 0.034489666984882206
     },
     "ood_double_gap|constant|guidance_margin|2.0": {
       "scenario": "ood_double_gap",
@@ -2792,7 +2792,7 @@
       "min_distance_to_obstacle": 0.6463285088539124,
       "smoothness": 5.444077491760254,
       "path_length": 55.577056884765625,
-      "inference_time_seconds": 0.02852699998766184
+      "inference_time_seconds": 0.02961825000238605
     },
     "ood_double_gap|conditional_constant|guidance_margin|2.0": {
       "scenario": "ood_double_gap",
@@ -2804,7 +2804,7 @@
       "min_distance_to_obstacle": 0.5002198219299316,
       "smoothness": 5.724343776702881,
       "path_length": 57.302860260009766,
-      "inference_time_seconds": 0.034407875005854294
+      "inference_time_seconds": 0.030695875000674278
     },
     "ood_double_gap|constant|guidance_margin|2.5": {
       "scenario": "ood_double_gap",
@@ -2816,7 +2816,7 @@
       "min_distance_to_obstacle": 0.5916685461997986,
       "smoothness": 20.451868057250977,
       "path_length": 108.47212219238281,
-      "inference_time_seconds": 0.03183041699230671
+      "inference_time_seconds": 0.032991417014272884
     },
     "ood_double_gap|conditional_constant|guidance_margin|2.5": {
       "scenario": "ood_double_gap",
@@ -2828,7 +2828,7 @@
       "min_distance_to_obstacle": 0.9315671324729919,
       "smoothness": 22.775177001953125,
       "path_length": 115.67526245117188,
-      "inference_time_seconds": 0.029222417011624202
+      "inference_time_seconds": 0.02912208400084637
     },
     "ood_double_gap|distance_gated|guidance_margin|0.0": {
       "scenario": "ood_double_gap",
@@ -2840,7 +2840,7 @@
       "min_distance_to_obstacle": 0.1619475781917572,
       "smoothness": 0.282081663608551,
       "path_length": 17.60692024230957,
-      "inference_time_seconds": 0.03764674998819828
+      "inference_time_seconds": 0.03767316599260084
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|0.0": {
       "scenario": "ood_double_gap",
@@ -2852,7 +2852,7 @@
       "min_distance_to_obstacle": 0.23899434506893158,
       "smoothness": 0.3013303875923157,
       "path_length": 18.03957176208496,
-      "inference_time_seconds": 0.03464749999693595
+      "inference_time_seconds": 0.03738758299732581
     },
     "ood_double_gap|distance_gated|guidance_margin|0.25": {
       "scenario": "ood_double_gap",
@@ -2864,7 +2864,7 @@
       "min_distance_to_obstacle": 0.2757349908351898,
       "smoothness": 0.3007177710533142,
       "path_length": 17.86882781982422,
-      "inference_time_seconds": 0.035432125005172566
+      "inference_time_seconds": 0.03999945800751448
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|0.25": {
       "scenario": "ood_double_gap",
@@ -2876,7 +2876,7 @@
       "min_distance_to_obstacle": 0.2975999414920807,
       "smoothness": 0.3162016272544861,
       "path_length": 18.242612838745117,
-      "inference_time_seconds": 0.03473229202791117
+      "inference_time_seconds": 0.03406283399090171
     },
     "ood_double_gap|distance_gated|guidance_margin|0.5": {
       "scenario": "ood_double_gap",
@@ -2888,7 +2888,7 @@
       "min_distance_to_obstacle": 0.38119640946388245,
       "smoothness": 0.33131566643714905,
       "path_length": 18.287399291992188,
-      "inference_time_seconds": 0.0347886249946896
+      "inference_time_seconds": 0.032511375000467524
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|0.5": {
       "scenario": "ood_double_gap",
@@ -2900,7 +2900,7 @@
       "min_distance_to_obstacle": 0.3702264726161957,
       "smoothness": 0.3415147662162781,
       "path_length": 18.58562469482422,
-      "inference_time_seconds": 0.03464362499653362
+      "inference_time_seconds": 0.03401891700923443
     },
     "ood_double_gap|distance_gated|guidance_margin|0.75": {
       "scenario": "ood_double_gap",
@@ -2912,7 +2912,7 @@
       "min_distance_to_obstacle": 0.3713027834892273,
       "smoothness": 0.3768114447593689,
       "path_length": 18.90193748474121,
-      "inference_time_seconds": 0.03160304200719111
+      "inference_time_seconds": 0.03243183399899863
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|0.75": {
       "scenario": "ood_double_gap",
@@ -2924,7 +2924,7 @@
       "min_distance_to_obstacle": 0.5015311241149902,
       "smoothness": 0.380472332239151,
       "path_length": 19.11565589904785,
-      "inference_time_seconds": 0.03151175001403317
+      "inference_time_seconds": 0.031656417006161064
     },
     "ood_double_gap|distance_gated|guidance_margin|1.0": {
       "scenario": "ood_double_gap",
@@ -2936,7 +2936,7 @@
       "min_distance_to_obstacle": 0.286784291267395,
       "smoothness": 0.44346192479133606,
       "path_length": 19.807266235351562,
-      "inference_time_seconds": 0.031057957996381447
+      "inference_time_seconds": 0.03259854100178927
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|1.0": {
       "scenario": "ood_double_gap",
@@ -2948,7 +2948,7 @@
       "min_distance_to_obstacle": 0.5467713475227356,
       "smoothness": 0.4414263367652893,
       "path_length": 19.950397491455078,
-      "inference_time_seconds": 0.03178674998343922
+      "inference_time_seconds": 0.03191383299417794
     },
     "ood_double_gap|distance_gated|guidance_margin|1.25": {
       "scenario": "ood_double_gap",
@@ -2960,7 +2960,7 @@
       "min_distance_to_obstacle": 0.5830063819885254,
       "smoothness": 0.5576066374778748,
       "path_length": 21.314590454101562,
-      "inference_time_seconds": 0.03247649999684654
+      "inference_time_seconds": 0.031628374999854714
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|1.25": {
       "scenario": "ood_double_gap",
@@ -2972,7 +2972,7 @@
       "min_distance_to_obstacle": 0.47002479434013367,
       "smoothness": 0.5488503575325012,
       "path_length": 21.386539459228516,
-      "inference_time_seconds": 0.03214041600585915
+      "inference_time_seconds": 0.03199408299406059
     },
     "ood_double_gap|distance_gated|guidance_margin|1.5": {
       "scenario": "ood_double_gap",
@@ -2984,7 +2984,7 @@
       "min_distance_to_obstacle": 0.5057284832000732,
       "smoothness": 0.7785889506340027,
       "path_length": 23.945472717285156,
-      "inference_time_seconds": 0.03165887499926612
+      "inference_time_seconds": 0.031380334025016055
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|1.5": {
       "scenario": "ood_double_gap",
@@ -2996,7 +2996,7 @@
       "min_distance_to_obstacle": 0.4851948916912079,
       "smoothness": 0.7581157088279724,
       "path_length": 23.930233001708984,
-      "inference_time_seconds": 0.031640667002648115
+      "inference_time_seconds": 0.031083583016879857
     },
     "ood_double_gap|distance_gated|guidance_margin|1.75": {
       "scenario": "ood_double_gap",
@@ -3008,7 +3008,7 @@
       "min_distance_to_obstacle": 0.5016655325889587,
       "smoothness": 1.2131633758544922,
       "path_length": 28.392385482788086,
-      "inference_time_seconds": 0.03207141597522423
+      "inference_time_seconds": 0.03224395800498314
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|1.75": {
       "scenario": "ood_double_gap",
@@ -3020,7 +3020,7 @@
       "min_distance_to_obstacle": 0.6716299057006836,
       "smoothness": 1.1772741079330444,
       "path_length": 28.292776107788086,
-      "inference_time_seconds": 0.03140470798825845
+      "inference_time_seconds": 0.03070195799227804
     },
     "ood_double_gap|distance_gated|guidance_margin|2.0": {
       "scenario": "ood_double_gap",
@@ -3032,7 +3032,7 @@
       "min_distance_to_obstacle": 0.7317562103271484,
       "smoothness": 2.0694706439971924,
       "path_length": 35.596336364746094,
-      "inference_time_seconds": 0.03164529099012725
+      "inference_time_seconds": 0.03234595799585804
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|2.0": {
       "scenario": "ood_double_gap",
@@ -3044,7 +3044,7 @@
       "min_distance_to_obstacle": 0.577442467212677,
       "smoothness": 2.0352184772491455,
       "path_length": 35.59534454345703,
-      "inference_time_seconds": 0.031942915986292064
+      "inference_time_seconds": 0.032256958016660064
     },
     "ood_double_gap|distance_gated|guidance_margin|2.5": {
       "scenario": "ood_double_gap",
@@ -3056,7 +3056,7 @@
       "min_distance_to_obstacle": 0.6642847657203674,
       "smoothness": 6.739382743835449,
       "path_length": 62.06564712524414,
-      "inference_time_seconds": 0.03221083301468752
+      "inference_time_seconds": 0.03159383300226182
     },
     "ood_double_gap|conditional_distance_gated|guidance_margin|2.5": {
       "scenario": "ood_double_gap",
@@ -3068,7 +3068,7 @@
       "min_distance_to_obstacle": 0.6525971293449402,
       "smoothness": 7.2880167961120605,
       "path_length": 64.84961700439453,
-      "inference_time_seconds": 0.031685291993198916
+      "inference_time_seconds": 0.03182020899839699
     }
   },
   "random_ood_summary": {}
