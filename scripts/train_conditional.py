@@ -1,3 +1,5 @@
+import _bootstrap  # noqa: E402, F401 — must precede rectified_flow imports
+
 import argparse
 from pathlib import Path
 
@@ -7,7 +9,7 @@ import torch.nn.functional as F
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from model import build_conditional_model
+from rectified_flow.model import build_conditional_model
 from train import resolve_device, set_seed
 
 

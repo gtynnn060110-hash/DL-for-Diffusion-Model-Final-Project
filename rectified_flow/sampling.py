@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from model import build_conditional_model, build_model
+from rectified_flow.model import build_conditional_model, build_model
 
 
 def set_seed(seed: int) -> None:

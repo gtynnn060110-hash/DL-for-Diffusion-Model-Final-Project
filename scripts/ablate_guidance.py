@@ -1,3 +1,5 @@
+import _bootstrap  # noqa: E402, F401 — must precede rectified_flow imports
+
 import argparse
 import csv
 import json
@@ -17,7 +19,7 @@ from evaluate import (
     sample_guided,
     unpack_obstacles,
 )
-from flow_sampling import (
+from rectified_flow.sampling import (
     load_conditional_model_from_checkpoint,
     load_model_from_checkpoint,
     load_real_data,

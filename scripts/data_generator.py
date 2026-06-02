@@ -87,7 +87,7 @@ def create_3d_plot(trajectories, obstacle_radius):
     x = obstacle_radius * np.cos(u) * np.sin(v)
     y = obstacle_radius * np.sin(u) * np.sin(v)
     z = obstacle_radius * np.cos(v)
-    
+
     fig.add_trace(go.Surface(
         x=x, y=y, z=z, colorscale='Reds', opacity=0.5, showscale=False, name="Obstacle"
     ))

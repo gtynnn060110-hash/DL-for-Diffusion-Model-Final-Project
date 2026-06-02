@@ -1,3 +1,5 @@
+import _bootstrap  # noqa: E402, F401 — must precede rectified_flow imports
+
 import argparse
 from pathlib import Path
 
@@ -7,7 +9,7 @@ import torch.nn.functional as F
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from model import build_model, get_default_device
+from rectified_flow.model import build_model, get_default_device
 
 
 def parse_args() -> argparse.Namespace:
@@ -151,16 +153,6 @@ def train() -> None:
         total_samples = 0
 
         for (x1_batch,) in dataloader:
-            # if not torch.isfinite(x1_batch).all():
-            #     raise RuntimeError("Encountered non-finite values in CPU batch before device transfer.")
-
-            # x1_batch = x1_batch.contiguous().to(
-            #     device=device,
-            #     dtype=torch.float32,
-            #     non_blocking=(device.type == "cuda"),
-            # )
-            # if not torch.isfinite(x1_batch).all():
-            #     raise RuntimeError("Encountered non-finite values right after device transfer.")
             x1_batch = x1_batch.to(
                 device=device, dtype=torch.float32, non_blocking=(device == "cuda")
             ).contiguous()
@@ -173,15 +165,6 @@ def train() -> None:
 
             v_pred = model(xt_batch, t.view(batch_size, 1))
             loss = F.mse_loss(v_pred, v_target)
-            # if not torch.isfinite(loss):
-            #     raise RuntimeError(
-            #         "Encountered non-finite loss. "
-            #         f"x1 finite={torch.isfinite(x1_batch).all().item()}, "
-            #         f"x0 finite={torch.isfinite(x0_batch).all().item()}, "
-            #         f"xt finite={torch.isfinite(xt_batch).all().item()}, "
-            #         f"v_target finite={torch.isfinite(v_target).all().item()}, "
-            #         f"v_pred finite={torch.isfinite(v_pred).all().item()}"
-            #     ) #use to debug mps memory transportation between cpu and mps
 
             optimizer.zero_grad(set_to_none=True)
             loss.backward()

@@ -1,17 +1,19 @@
+import _bootstrap  # noqa: E402, F401 — must precede rectified_flow imports
+
 import argparse
 from pathlib import Path
 
 import numpy as np
 import torch
 
-from flow_sampling import (
+from rectified_flow.sampling import (
     guided_euler_sample,
     load_model_from_checkpoint,
     load_real_data,
     obstacle_distance_stats,
     set_seed,
 )
-from model import get_default_device
+from rectified_flow.model import get_default_device
 
 
 def parse_args() -> argparse.Namespace:

@@ -1,3 +1,5 @@
+import _bootstrap  # noqa: E402, F401 — must precede rectified_flow imports
+
 import argparse
 import json
 import time
@@ -6,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from flow_sampling import (
+from rectified_flow.sampling import (
     conditional_euler_sample,
     conditional_guided_euler_sample,
     euler_sample,
@@ -139,7 +141,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def resolve_device(device_arg: str) -> torch.device:
-    from model import get_default_device
+    from rectified_flow.model import get_default_device
 
     if device_arg == "auto":
         return get_default_device()

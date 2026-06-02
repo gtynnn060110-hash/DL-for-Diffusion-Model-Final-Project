@@ -10,17 +10,19 @@
 ## 项目结构
 
 ```text
-data_generator.py              # 无条件轨迹数据生成（Bezier 曲线 + 碰撞过滤）
-generate_conditional_data.py   # 条件轨迹数据生成（含障碍物参数向量）
-model.py                       # RectifiedFlowMLP + RectifiedFlowConditionalMLP
-train.py / train_conditional.py # 训练脚本
-flow_sampling.py               # 采样核心：Euler / Guided / Conditional 四种采样函数
-recflow.py                     # Baseline 无条件推断 CLI
-recflow_guided.py              # Energy-Guided 推断 CLI（constant / distance_gated）
-recflow_conditional.py         # Conditional / Conditional+Guided 推断 CLI
-evaluate.py                    # 批量评测（配对 z0，最多四路对比）
-ablate_guidance.py             # 参数消融（支持 unconditional + conditional 四曲线对比）
-visualize_trajectories.py      # 数据集浏览
+rectified_flow/                 # 核心包（模型定义 + 采样逻辑）
+  model.py                       # RectifiedFlowMLP + RectifiedFlowConditionalMLP
+  sampling.py                    # 采样核心：Euler / Guided / Conditional 四种采样函数
+scripts/                        # CLI / 实验脚本
+  data_generator.py              # 无条件轨迹数据生成（Bezier 曲线 + 碰撞过滤）
+  generate_conditional_data.py   # 条件轨迹数据生成（含障碍物参数向量）
+  train.py / train_conditional.py # 训练脚本
+  recflow.py                     # Baseline 无条件推断 CLI
+  recflow_guided.py              # Energy-Guided 推断 CLI（constant / distance_gated）
+  recflow_conditional.py         # Conditional / Conditional+Guided 推断 CLI
+  evaluate.py                    # 批量评测（配对 z0，最多四路对比）
+  ablate_guidance.py             # 参数消融（支持 unconditional + conditional 四曲线对比）
+  visualize_trajectories.py      # 数据集浏览
 ```
 
 ## 方法概览
@@ -102,50 +104,50 @@ pip install -r requirements.txt
 
 ```bash
 # 生成数据
-python data_generator.py --no-visualize --num-trajectories 5000 --seq-len 50 --output-path dataset/toy_trajectories.npy
+python scripts/data_generator.py --no-visualize --num-trajectories 5000 --seq-len 50 --output-path dataset/toy_trajectories.npy
 
 # 训练
-python train.py --data-path dataset/toy_trajectories.npy --checkpoint-path checkpoints/rectified_flow_mlp.pt --epochs 200 --seed 42
+python scripts/train.py --data-path dataset/toy_trajectories.npy --checkpoint-path checkpoints/rectified_flow_mlp.pt --epochs 200 --seed 42
 
 # Baseline 推断
-python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --steps 20 --num-samples 50 --no-show
+python scripts/recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --steps 20 --num-samples 50 --no-show
 
 # Guided 推断（单障碍）
-python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay distance_gated --no-show
+python scripts/recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay distance_gated --no-show
 
 # Guided 推断（双障碍）
-python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --steps 20 --num-samples 50 --obstacle 0 1.5 0 1.0 --obstacle 0 -1.5 0 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay distance_gated --no-show
+python scripts/recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --steps 20 --num-samples 50 --obstacle 0 1.5 0 1.0 --obstacle 0 -1.5 0 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay distance_gated --no-show
 
 # 批量评测
-python evaluate.py --device cpu
+python scripts/evaluate.py --device cpu
 
 # 随机 OOD 评测
-python evaluate.py --device cpu --random-ood-count 20
+python scripts/evaluate.py --device cpu --random-ood-count 20
 
 # 参数消融
-python ablate_guidance.py --device cpu --ablate guidance_scale
+python scripts/ablate_guidance.py --device cpu --ablate guidance_scale
 ```
 
 ### 3. 条件管道
 
 ```bash
 # 生成条件数据
-python generate_conditional_data.py --num-trajectories 5000 --seq-len 50 --max-obstacles 2 --output-path dataset/conditional_trajectories.npz
+python scripts/generate_conditional_data.py --num-trajectories 5000 --seq-len 50 --max-obstacles 2 --output-path dataset/conditional_trajectories.npz
 
 # 训练条件模型
-python train_conditional.py --data-path dataset/conditional_trajectories.npz --checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --epochs 200 --seed 42
+python scripts/train_conditional.py --data-path dataset/conditional_trajectories.npz --checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --epochs 200 --seed 42
 
 # 条件推断（无 guidance）
-python recflow_conditional.py --checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --data-path dataset/conditional_trajectories.npz --num-samples 50 --steps 20 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --save-fig outputs/conditional_ood.png --no-show
+python scripts/recflow_conditional.py --checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --data-path dataset/conditional_trajectories.npz --num-samples 50 --steps 20 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --save-fig outputs/conditional_ood.png --no-show
 
 # 条件 + guided 推断
-python recflow_conditional.py --checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --data-path dataset/conditional_trajectories.npz --num-samples 50 --steps 20 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guided --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay distance_gated --save-fig outputs/conditional_guided_ood.png --no-show
+python scripts/recflow_conditional.py --checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --data-path dataset/conditional_trajectories.npz --num-samples 50 --steps 20 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guided --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay distance_gated --save-fig outputs/conditional_guided_ood.png --no-show
 
 # 四路对比评测
-python evaluate.py --device cpu --conditional-checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --guidance-decay distance_gated --output-json outputs/evaluation_conditional_results.json --output-markdown outputs/evaluation_conditional_summary.md
+python scripts/evaluate.py --device cpu --conditional-checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --guidance-decay distance_gated --output-json outputs/evaluation_conditional_results.json --output-markdown outputs/evaluation_conditional_summary.md
 
 # 条件消融（四曲线对比）
-python ablate_guidance.py --device cpu --conditional-checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --ablate guidance_scale --num-samples 500 --plot
+python scripts/ablate_guidance.py --device cpu --conditional-checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --ablate guidance_scale --num-samples 500 --plot
 ```
 
 Windows 上若遇到 `libiomp5md.dll already initialized`：
