@@ -7,10 +7,14 @@ import numpy as np
 import torch
 
 from flow_sampling import (
+    conditional_euler_sample,
+    conditional_guided_euler_sample,
     euler_sample,
     guided_euler_sample,
+    load_conditional_model_from_checkpoint,
     load_model_from_checkpoint,
     load_real_data,
+    make_obstacle_condition,
     make_initial_noise,
     obstacle_distance_stats,
     set_seed,
@@ -51,6 +55,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--data-path", type=str, default=STANDARD_EXPERIMENT["data_path"])
     parser.add_argument("--checkpoint-path", type=str, default=STANDARD_EXPERIMENT["checkpoint_path"])
+    parser.add_argument(
+        "--conditional-checkpoint-path",
+        type=str,
+        default="",
+        help=(
+            "Optional conditional checkpoint. When provided, evaluate conditional "
+            "and conditional+guided methods alongside the unconditional model."
+        ),
+    )
     parser.add_argument("--num-samples", type=int, default=STANDARD_EXPERIMENT["num_samples"])
     parser.add_argument("--steps", type=int, default=STANDARD_EXPERIMENT["steps"])
     parser.add_argument("--seed", type=int, default=STANDARD_EXPERIMENT["seed"])
@@ -336,6 +349,76 @@ def sample_guided(
     return generated.detach().cpu().numpy().astype(np.float32), elapsed
 
 
+def sample_conditional(
+    model: torch.nn.Module,
+    condition: torch.Tensor,
+    num_samples: int,
+    seq_len: int,
+    point_dim: int,
+    steps: int,
+    device: torch.device,
+    z_init: torch.Tensor,
+) -> tuple[np.ndarray, float]:
+    synchronize_if_needed(device)
+    start = time.perf_counter()
+    generated = conditional_euler_sample(
+        model=model,
+        condition=condition,
+        num_samples=num_samples,
+        seq_len=seq_len,
+        point_dim=point_dim,
+        steps=steps,
+        device=device,
+        z_init=z_init,
+    )
+    synchronize_if_needed(device)
+    elapsed = time.perf_counter() - start
+    return generated.detach().cpu().numpy().astype(np.float32), elapsed
+
+
+def sample_conditional_guided(
+    model: torch.nn.Module,
+    condition: torch.Tensor,
+    num_samples: int,
+    seq_len: int,
+    point_dim: int,
+    steps: int,
+    device: torch.device,
+    z_init: torch.Tensor,
+    obstacle_centers: np.ndarray,
+    obstacle_radii: np.ndarray,
+    guidance_scale: float,
+    guidance_margin: float,
+    guidance_decay: str,
+    max_guidance_norm: float,
+) -> tuple[np.ndarray, float]:
+    obstacle_centers_tensor = torch.tensor(obstacle_centers, device=device, dtype=torch.float32)
+    obstacle_radii_tensor = torch.tensor(obstacle_radii, device=device, dtype=torch.float32)
+    synchronize_if_needed(device)
+    start = time.perf_counter()
+    generated = conditional_guided_euler_sample(
+        model=model,
+        condition=condition,
+        num_samples=num_samples,
+        seq_len=seq_len,
+        point_dim=point_dim,
+        steps=steps,
+        device=device,
+        obstacle_center=obstacle_centers_tensor[0],
+        obstacle_radius=float(obstacle_radii_tensor[0].item()),
+        guidance_scale=guidance_scale,
+        guidance_margin=guidance_margin,
+        guidance_decay=guidance_decay,
+        max_guidance_norm=max_guidance_norm,
+        z_init=z_init,
+        obstacle_centers=obstacle_centers_tensor,
+        obstacle_radii=obstacle_radii_tensor,
+    )
+    synchronize_if_needed(device)
+    elapsed = time.perf_counter() - start
+    return generated.detach().cpu().numpy().astype(np.float32), elapsed
+
+
 def format_markdown(results: dict[str, object]) -> str:
     lines = [
         "# Evaluation Summary",
@@ -364,6 +447,12 @@ def format_markdown(results: dict[str, object]) -> str:
                     time=metrics["inference_time_seconds"],
                 )
             )
+        if "conditional_skipped_reason" in scenario:
+            lines.append(
+                "| {scenario} | conditional_skipped | - | - | - | - | - | - |".format(
+                    scenario=scenario["name"]
+                )
+            )
     random_summary = results.get("random_ood_summary", {})
     if random_summary:
         lines.extend(["", "## Random OOD Summary", ""])
@@ -389,7 +478,8 @@ def format_markdown(results: dict[str, object]) -> str:
             "",
             "- `success_rate` is the primary obstacle-avoidance metric.",
             "- `smoothness` is the mean squared second difference; lower is smoother.",
-            "- Baseline and guided use the same checkpoint, seed, sample count, integration steps, and initial noise z0.",
+            "- Unconditional and conditional methods use paired initial noise z0 within each scenario.",
+            "- Conditional methods require a conditional checkpoint and encode obstacles as flattened `(cx, cy, cz, radius)` slots.",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -420,11 +510,23 @@ def main() -> None:
         point_dim=point_dim,
         device=device,
     )
+    conditional_model = None
+    conditional_condition_dim = 0
+    if args.conditional_checkpoint_path:
+        conditional_model = load_conditional_model_from_checkpoint(
+            checkpoint_path=Path(args.conditional_checkpoint_path),
+            seq_len=seq_len,
+            point_dim=point_dim,
+            device=device,
+        )
+        conditional_condition_dim = int(getattr(conditional_model, "condition_dim"))
 
     results: dict[str, object] = {
         "config": {
             "data_path": args.data_path,
             "checkpoint_path": args.checkpoint_path,
+            "conditional_checkpoint_path": args.conditional_checkpoint_path,
+            "conditional_condition_dim": conditional_condition_dim,
             "device": str(device),
             "num_samples": num_samples,
             "steps": int(args.steps),
@@ -494,6 +596,58 @@ def main() -> None:
             method_name = f"guided_{guidance_decay}"
             scenario_result["methods"].append(method_name)
             scenario_result[method_name] = guided_metrics
+
+        if conditional_model is not None:
+            try:
+                condition = make_obstacle_condition(
+                    obstacle_centers=torch.tensor(obstacle_centers, device=device, dtype=torch.float32),
+                    obstacle_radii=torch.tensor(obstacle_radii, device=device, dtype=torch.float32),
+                    condition_dim=conditional_condition_dim,
+                )
+            except ValueError as exc:
+                scenario_result["conditional_skipped_reason"] = str(exc)
+            else:
+                conditional, conditional_time = sample_conditional(
+                    model=conditional_model,
+                    condition=condition,
+                    num_samples=num_samples,
+                    seq_len=seq_len,
+                    point_dim=point_dim,
+                    steps=int(args.steps),
+                    device=device,
+                    z_init=z_init.clone(),
+                )
+                conditional_metrics = evaluate_trajectories(
+                    conditional, obstacle_centers, obstacle_radii
+                )
+                conditional_metrics["inference_time_seconds"] = conditional_time
+                scenario_result["methods"].append("conditional")
+                scenario_result["conditional"] = conditional_metrics
+
+                for guidance_decay in guidance_decays:
+                    conditional_guided, conditional_guided_time = sample_conditional_guided(
+                        model=conditional_model,
+                        condition=condition,
+                        num_samples=num_samples,
+                        seq_len=seq_len,
+                        point_dim=point_dim,
+                        steps=int(args.steps),
+                        device=device,
+                        z_init=z_init.clone(),
+                        obstacle_centers=obstacle_centers,
+                        obstacle_radii=obstacle_radii,
+                        guidance_scale=float(args.guidance_scale),
+                        guidance_margin=float(args.guidance_margin),
+                        guidance_decay=str(guidance_decay),
+                        max_guidance_norm=float(args.max_guidance_norm),
+                    )
+                    conditional_guided_metrics = evaluate_trajectories(
+                        conditional_guided, obstacle_centers, obstacle_radii
+                    )
+                    conditional_guided_metrics["inference_time_seconds"] = conditional_guided_time
+                    method_name = f"conditional_guided_{guidance_decay}"
+                    scenario_result["methods"].append(method_name)
+                    scenario_result[method_name] = conditional_guided_metrics
 
         results["scenarios"].append(scenario_result)
 

@@ -8,13 +8,17 @@
 
 ```text
 data_generator.py         # 生成 3D Bezier 专家轨迹，并用中心球障碍物做碰撞过滤
+generate_conditional_data.py # 生成带障碍条件向量的条件轨迹数据
 visualize_trajectories.py # 可视化 .npy 轨迹数据
-model.py                  # Rectified Flow MLP 与时间嵌入
+model.py                  # Unconditional / Conditional Rectified Flow MLP 与时间嵌入
 train.py                  # 训练速度场 v_theta(x_t, t)
+train_conditional.py      # 训练带障碍条件输入的速度场 v_theta(x_t, t, c)
 flow_sampling.py          # 共享：Euler / Guided 采样、势能梯度、障碍统计、checkpoint 加载
 recflow.py                # baseline 推断 CLI 与可视化（调用 flow_sampling）
 recflow_guided.py         # Energy-Guided 推断 CLI 与可视化（调用 flow_sampling）
+recflow_conditional.py    # Conditional / Conditional+Guided 推断 CLI 与可视化
 evaluate.py               # 批量评测 baseline 和 guided（配对初始噪声 z0）
+ablate_guidance.py        # guidance_scale / margin / norm 消融与 Pareto CSV / 图
 PROJECT_PROGRESS.md       # 分阶段工作梳理（汇报 / 答辩用）
 DEFENSE_NOTES.md          # 答辩叙事提纲
 ```
@@ -30,14 +34,14 @@ DEFENSE_NOTES.md          # 答辩叙事提纲
 | `make_initial_noise(..., z_init=None)` | 生成或校验初始噪声 `z0` |
 | `euler_sample(..., z_init=None)` | Baseline：`z ← z + v_θ(z,t)·dt` |
 | `guided_euler_sample(..., z_init=None)` | Guided：`z ← z + (v_θ - λ·∇E)·dt` |
-| `compute_obstacle_energy_gradient` | 单球软边界排斥梯度 |
-| `obstacle_distance_stats` | 碰撞率 / 成功率 / 最小距离 |
+| `compute_obstacle_energy_gradient` | 单球 / 多球软边界排斥梯度 |
+| `obstacle_distance_stats` | 单障碍 / 多障碍碰撞率、成功率、最小距离 |
 | `load_model_from_checkpoint` | 加载训练 checkpoint |
 | `set_seed` / `load_real_data` | 评测与 CLI 共用工具函数 |
 
 **配对采样**：`evaluate.py` 对每个评测场景只采样一次 `z0`，baseline 与 guided 分别传入 `z_init` 与 `z_init.clone()`，保证二者差异仅来自 energy guidance，而非不同随机初值。
 
-后续 Phase 1 步骤（自适应 `distance_gated`、多障碍、随机 OOD 评测）将直接扩展本模块，无需再改 CLI 脚本的积分循环。
+Phase 1 已在本模块上完成 `distance_gated` 自适应引导、多障碍势能叠加、随机 OOD 评测与 guidance 参数消融；CLI 脚本只负责参数解析和可视化。
 
 ## 方法概览
 
@@ -72,9 +76,10 @@ x = x + (v_theta(x, t) - lambda_t * grad E(x)) * dt
 
 - 障碍物中心：`--obstacle-center`
 - 障碍物半径：`--obstacle-radius`
+- 多障碍输入：重复传入 `--obstacle X Y Z R`
 - 引导强度：`--guidance-scale`
 - 安全边界：`--guidance-margin`
-- 时间衰减：`--guidance-decay {constant, linear}`
+- 引导模式：`--guidance-decay {constant, distance_gated}`
 - 引导范数裁剪：`--max-guidance-norm`
 
 ## 当前实验结果
@@ -86,29 +91,43 @@ x = x + (v_theta(x, t) - lambda_t * grad E(x)) * dt
 - 样本数：`200`
 - 采样步数：`20`
 - 随机种子：`42`
-- Guidance：`scale=3.0, margin=2.0, decay=constant, max_norm=10.0`
+- Guidance：`scale=3.0, margin=2.0, decay in {constant, distance_gated}, max_norm=10.0`
 
 `evaluate.py` 的一次 CPU 评测结果如下：
 
 | Scenario | Method | Success Rate | Collision Rate | Min Distance | Smoothness | Path Length | Time (s) |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| in_distribution_origin | baseline | 0.9000 | 0.1000 | 0.1206 | 0.3040 | 18.1034 | 0.1952 |
-| in_distribution_origin | guided | 0.9850 | 0.0150 | 0.6177 | 4.4957 | 53.0077 | 0.1102 |
-| ood_shifted_y | baseline | 0.8550 | 0.1450 | 0.1298 | 0.3040 | 18.1034 | 0.0512 |
-| ood_shifted_y | guided | 1.0000 | 0.0000 | 1.4554 | 0.5742 | 22.3743 | 0.1112 |
+| in_distribution_origin | baseline | 0.7500 | 0.2500 | 0.0847 | 0.2620 | 17.2844 | 0.0166 |
+| in_distribution_origin | guided_constant | 0.9800 | 0.0200 | 0.6567 | 5.0614 | 55.9591 | 0.0148 |
+| in_distribution_origin | guided_distance_gated | 0.9800 | 0.0200 | 0.6033 | 2.3036 | 38.8434 | 0.0159 |
+| ood_shifted_y | baseline | 0.7800 | 0.2200 | 0.1062 | 0.2620 | 17.2844 | 0.0116 |
+| ood_shifted_y | guided_constant | 1.0000 | 0.0000 | 1.4181 | 0.5978 | 22.3192 | 0.0149 |
+| ood_shifted_y | guided_distance_gated | 1.0000 | 0.0000 | 1.0205 | 0.4709 | 20.2886 | 0.0158 |
+| ood_double_gap | baseline | 0.5750 | 0.4250 | 0.0609 | 0.2620 | 17.2844 | 0.0123 |
+| ood_double_gap | guided_constant | 0.9700 | 0.0300 | 0.8065 | 5.2318 | 54.6563 | 0.0160 |
+| ood_double_gap | guided_distance_gated | 0.9550 | 0.0450 | 0.7946 | 1.9563 | 34.8642 | 0.0186 |
 
 结果说明：
 
-- 在 OOD 障碍物位置 `(0, 1.5, 0)` 下，guided 将成功率从 `0.8550` 提升到 `1.0000`。
-- Guided 的最小障碍物距离明显提高，说明排斥势能确实改变了危险轨迹。
-- 强 guidance 在训练内原点障碍场景下会显著拉长路径并降低平滑性，因此更适合作为 OOD 推断期修正，而不是无条件替代 baseline。
+- 在 OOD 障碍物位置 `(0, 1.5, 0)` 下，两种 guided 方法都将成功率从 `0.7800` 提升到 `1.0000`。
+- 在双障碍 `ood_double_gap` 场景下，baseline 成功率为 `0.5750`，guided 方法提升到 `0.9700` / `0.9550`。
+- `guided_constant` 避障最强，但在 ID 和双障碍场景下路径更长、平滑度代价更高；`guided_distance_gated` 成功率接近，同时更平滑、更短。
 
 完整评测输出见：
 
 - `outputs/evaluation_summary.md`
 - `outputs/evaluation_results.json`
 - `outputs/base_ood.png`
-- `outputs/guided_ood.png`
+- `outputs/guided_constant_ood.png`
+- `outputs/guided_distance_gated_ood.png`
+- `outputs/base_double_ood.png`
+- `outputs/guided_constant_double_ood.png`
+- `outputs/guided_distance_gated_double_ood.png`
+- `outputs/ablation_guidance_summary_*.md`
+- `outputs/ablation_plots/*.png`
+- `outputs/evaluation_conditional_summary.md`
+- `outputs/conditional_ood.png`
+- `outputs/conditional_guided_ood.png`
 
 ## 运行方式
 
@@ -139,7 +158,7 @@ python recflow.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-pat
 ### 5. Energy-Guided 推断
 
 ```bash
-python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay constant --max-guidance-norm 10.0 --save-generated outputs/guided_ood.npy --save-fig outputs/guided_ood.png --no-show
+python recflow_guided.py --checkpoint-path checkpoints/rectified_flow_mlp.pt --data-path dataset/toy_trajectories.npy --seed 42 --steps 20 --num-samples 50 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guidance-scale 3.0 --guidance-margin 2.0 --guidance-decay constant --max-guidance-norm 10.0 --save-generated outputs/guided_constant_ood.npy --save-fig outputs/guided_constant_ood.png --no-show
 ```
 
 ### 6. 批量评测（配对 z0）
@@ -149,6 +168,35 @@ python evaluate.py --device cpu
 ```
 
 `evaluate.py` 通过 `flow_sampling.make_initial_noise` 为每个场景生成一份 `z0`，baseline 与 guided 共用该初值进行公平对比。
+
+### 7. Guidance 消融
+
+```bash
+python ablate_guidance.py --device cpu --ablate guidance_scale --num-samples 500
+python ablate_guidance.py --device cpu --ablate guidance_margin --num-samples 500
+python ablate_guidance.py --device cpu --ablate max_guidance_norm --num-samples 500
+```
+
+消融结果会写入 `outputs/ablation_guidance_summary_*.md`、`outputs/ablation_guidance_pareto_*.csv` 与 `outputs/ablation_plots/`。
+
+### 8. Conditional Rectified Flow（Phase 2）
+
+```bash
+python generate_conditional_data.py --num-trajectories 5000 --seq-len 50 --max-obstacles 2 --min-obstacles 1 --max-active-obstacles 2 --output-path dataset/conditional_trajectories.npz
+python train_conditional.py --data-path dataset/conditional_trajectories.npz --checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --epochs 200 --seed 42
+python evaluate.py --device cpu --conditional-checkpoint-path checkpoints/rectified_flow_conditional_mlp.pt --guidance-decay distance_gated --output-json outputs/evaluation_conditional_results.json --output-markdown outputs/evaluation_conditional_summary.md
+```
+
+Conditional 模型把障碍物编码为固定长度条件向量：每个球形障碍占 4 维 `(cx, cy, cz, radius)`，按 `max_obstacles` 展平，不足部分补 0。传入 `--conditional-checkpoint-path` 后，`evaluate.py` 会追加 `conditional` 与 `conditional_guided_*`，从而形成 `uncond / uncond+guided / cond / cond+guided` 四路对比；若只想严格四路，可只传一个 `--guidance-decay`。
+
+可视化 conditional 采样效果：
+
+```bash
+python recflow_conditional.py --device cpu --num-samples 50 --steps 20 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --save-fig outputs/conditional_ood.png --save-generated outputs/conditional_ood.npy --no-show
+python recflow_conditional.py --device cpu --num-samples 50 --steps 20 --obstacle-center 0 1.5 0 --obstacle-radius 1.0 --guided --save-fig outputs/conditional_guided_ood.png --save-generated outputs/conditional_guided_ood.npy --no-show
+```
+
+当前 200 样本四路对比中，`ood_shifted_y` 下 `conditional` 成功率为 `0.8150`，高于 uncond baseline 的 `0.7800`；`conditional_guided_distance_gated` 成功率为 `1.0000`，并将最小距离提升到 `1.3255`。在 `ood_double_gap` 下，`conditional` 成功率为 `0.7200`，高于 baseline 的 `0.5750`；`conditional_guided_distance_gated` 达到 `0.9700`。
 
 如果 Windows 环境中出现 `libiomp5md.dll already initialized`，可临时使用：
 
@@ -165,18 +213,31 @@ python evaluate.py --device cpu
 2. Baseline 学到的是训练数据分布，不显式感知新的障碍物位置。
 3. Energy Guidance 在不重训模型的前提下，用物理排斥势能修正推断轨迹。
 4. OOD 障碍物实验显示 guided 能显著提高避障成功率。
-5. 当前方法仍是推断期启发式引导，后续可扩展为条件 Flow Matching 或 SDF 条件输入。
+5. 消融实验说明 guidance 参数存在成功率与轨迹质量的 trade-off，`distance_gated` 是更稳妥的默认展示配置。
+6. 当前方法仍是推断期启发式引导，后续可扩展为条件 Flow Matching 或 SDF 条件输入。
 
 更详细的答辩提纲见 `DEFENSE_NOTES.md`；分阶段工作与实验证据见 [`PROJECT_PROGRESS.md`](PROJECT_PROGRESS.md)。
 
 ## 局限与下一步
 
-- 当前障碍物只支持球形软边界，尚未支持复杂几何、多障碍或动态障碍物。
-- 当前 guidance 不参与训练，强引导可能带来轨迹变长或平滑性下降；Phase 1 后续将加入 `distance_gated` 等自适应引导以缓解 in-distribution 副作用。
+- 当前障碍物支持静态单球 / 多球软边界，尚未支持复杂几何或动态障碍物。
+- 当前 guidance 不参与训练，强引导可能带来轨迹变长或平滑性下降；`distance_gated` 能缓解但不能完全消除这个 trade-off。
 - 当前模型是整段轨迹 MLP，尚未引入更强的序列架构。
-- 后续更合理的方向是把障碍物参数或 SDF 表示作为条件输入，训练 conditional Rectified Flow（Phase 2）。
+- Phase 2 已加入球形障碍参数条件输入；后续更合理的方向是扩展到 SDF、occupancy 或更强序列模型。
 
 ### Phase 1 进度
 
 - [x] Step 1–2：`flow_sampling.py` + 脚本瘦身 + `evaluate.py` 配对 `z0`
-- [ ] Step 3–7：自适应引导、多障碍、随机 OOD 评测、消融与文档
+- [x] Step 3：`distance_gated` 自适应引导
+- [x] Step 4：多障碍势能叠加 + 双球夹缝 demo
+- [x] Step 5/6：固定与随机 OOD 评测
+- [x] Step 7：guidance 参数消融、Pareto CSV 与图
+
+### Phase 2 进度
+
+- [x] 条件数据生成脚本：`generate_conditional_data.py`
+- [x] `RectifiedFlowConditionalMLP` + `train_conditional.py`
+- [x] `evaluate.py` 支持四路对比接口
+- [x] `recflow_conditional.py` 支持 conditional / conditional+guided 可视化
+- [x] 跑完 conditional 训练与 200 样本四路评测
+- [ ] 进一步调参或扩展到更强条件表示（如 SDF）
