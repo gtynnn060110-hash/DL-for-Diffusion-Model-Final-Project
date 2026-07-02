@@ -1,0 +1,250 @@
+{
+  "config": {
+    "data_path": "dataset/toy_trajectories.npy",
+    "checkpoint_path": "checkpoints/rectified_flow_mlp.pt",
+    "conditional_checkpoint_path": "checkpoints/rectified_flow_conditional_mlp.pt",
+    "conditional_condition_dim": 8,
+    "device": "cpu",
+    "num_samples": 200,
+    "steps": 20,
+    "seed": 42,
+    "guidance_scale": 3.0,
+    "guidance_margin": 2.0,
+    "guidance_decays": [
+      "constant",
+      "distance_gated"
+    ],
+    "max_guidance_norm": 6.0,
+    "random_ood_count": 0,
+    "random_ood_y_range": [
+      -2.5,
+      2.5
+    ],
+    "random_ood_z_range": [
+      -1.5,
+      1.5
+    ],
+    "random_ood_radius_range": [
+      0.8,
+      1.2
+    ],
+    "random_ood_min_center_norm": 1.0
+  },
+  "scenarios": [
+    {
+      "name": "in_distribution_origin",
+      "obstacles": [
+        {
+          "center": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radius": 1.0
+        }
+      ],
+      "methods": [
+        "baseline",
+        "guided_constant",
+        "guided_distance_gated",
+        "conditional",
+        "conditional_guided_constant",
+        "conditional_guided_distance_gated"
+      ],
+      "baseline": {
+        "collision_rate": 0.1,
+        "success_rate": 0.9,
+        "min_distance_to_obstacle": 0.12061411887407303,
+        "smoothness": 0.30396509170532227,
+        "path_length": 18.10336685180664,
+        "inference_time_seconds": 0.07455060000029334
+      },
+      "guided_constant": {
+        "collision_rate": 0.015,
+        "success_rate": 0.985,
+        "min_distance_to_obstacle": 0.5609225630760193,
+        "smoothness": 4.430798530578613,
+        "path_length": 52.63716125488281,
+        "inference_time_seconds": 0.08153649999985646
+      },
+      "guided_distance_gated": {
+        "collision_rate": 0.005,
+        "success_rate": 0.995,
+        "min_distance_to_obstacle": 0.6793264746665955,
+        "smoothness": 1.9884027242660522,
+        "path_length": 36.73353958129883,
+        "inference_time_seconds": 0.10784419999981765
+      },
+      "conditional": {
+        "collision_rate": 0.22,
+        "success_rate": 0.78,
+        "min_distance_to_obstacle": 0.12414667755365372,
+        "smoothness": 0.29810744524002075,
+        "path_length": 17.849313735961914,
+        "inference_time_seconds": 0.06539420000081009
+      },
+      "conditional_guided_constant": {
+        "collision_rate": 0.01,
+        "success_rate": 0.99,
+        "min_distance_to_obstacle": 0.8761149048805237,
+        "smoothness": 7.413553237915039,
+        "path_length": 66.40904998779297,
+        "inference_time_seconds": 0.10685790000025008
+      },
+      "conditional_guided_distance_gated": {
+        "collision_rate": 0.02,
+        "success_rate": 0.98,
+        "min_distance_to_obstacle": 0.6593732833862305,
+        "smoothness": 2.966102361679077,
+        "path_length": 43.266845703125,
+        "inference_time_seconds": 0.13039809999918361
+      }
+    },
+    {
+      "name": "ood_shifted_y",
+      "obstacles": [
+        {
+          "center": [
+            0.0,
+            1.5,
+            0.0
+          ],
+          "radius": 1.0
+        }
+      ],
+      "methods": [
+        "baseline",
+        "guided_constant",
+        "guided_distance_gated",
+        "conditional",
+        "conditional_guided_constant",
+        "conditional_guided_distance_gated"
+      ],
+      "baseline": {
+        "collision_rate": 0.145,
+        "success_rate": 0.855,
+        "min_distance_to_obstacle": 0.12979301810264587,
+        "smoothness": 0.30396509170532227,
+        "path_length": 18.10336685180664,
+        "inference_time_seconds": 0.05823150000014721
+      },
+      "guided_constant": {
+        "collision_rate": 0.0,
+        "success_rate": 1.0,
+        "min_distance_to_obstacle": 1.449653148651123,
+        "smoothness": 0.5708203315734863,
+        "path_length": 22.331979751586914,
+        "inference_time_seconds": 0.08396600000014587
+      },
+      "guided_distance_gated": {
+        "collision_rate": 0.005,
+        "success_rate": 0.995,
+        "min_distance_to_obstacle": 0.9957918524742126,
+        "smoothness": 0.4676800072193146,
+        "path_length": 20.5473690032959,
+        "inference_time_seconds": 0.10662600000068778
+      },
+      "conditional": {
+        "collision_rate": 0.09,
+        "success_rate": 0.91,
+        "min_distance_to_obstacle": 0.3066859543323517,
+        "smoothness": 0.29749786853790283,
+        "path_length": 17.837125778198242,
+        "inference_time_seconds": 0.06302940000023227
+      },
+      "conditional_guided_constant": {
+        "collision_rate": 0.0,
+        "success_rate": 1.0,
+        "min_distance_to_obstacle": 2.044825792312622,
+        "smoothness": 0.6571601629257202,
+        "path_length": 23.427248001098633,
+        "inference_time_seconds": 0.10131149999961053
+      },
+      "conditional_guided_distance_gated": {
+        "collision_rate": 0.0,
+        "success_rate": 1.0,
+        "min_distance_to_obstacle": 1.4835410118103027,
+        "smoothness": 0.5003695487976074,
+        "path_length": 21.08565902709961,
+        "inference_time_seconds": 0.10672470000008616
+      }
+    },
+    {
+      "name": "ood_double_gap",
+      "obstacles": [
+        {
+          "center": [
+            0.0,
+            1.5,
+            0.0
+          ],
+          "radius": 1.0
+        },
+        {
+          "center": [
+            0.0,
+            -1.5,
+            0.0
+          ],
+          "radius": 1.0
+        }
+      ],
+      "methods": [
+        "baseline",
+        "guided_constant",
+        "guided_distance_gated",
+        "conditional",
+        "conditional_guided_constant",
+        "conditional_guided_distance_gated"
+      ],
+      "baseline": {
+        "collision_rate": 0.385,
+        "success_rate": 0.615,
+        "min_distance_to_obstacle": 0.09779446572065353,
+        "smoothness": 0.30396509170532227,
+        "path_length": 18.10336685180664,
+        "inference_time_seconds": 0.04748699999981909
+      },
+      "guided_constant": {
+        "collision_rate": 0.025,
+        "success_rate": 0.975,
+        "min_distance_to_obstacle": 0.8103025555610657,
+        "smoothness": 4.7382354736328125,
+        "path_length": 51.87687683105469,
+        "inference_time_seconds": 0.10316520000014862
+      },
+      "guided_distance_gated": {
+        "collision_rate": 0.075,
+        "success_rate": 0.925,
+        "min_distance_to_obstacle": 0.6643078923225403,
+        "smoothness": 1.8743778467178345,
+        "path_length": 34.09855651855469,
+        "inference_time_seconds": 0.13204599999971833
+      },
+      "conditional": {
+        "collision_rate": 0.325,
+        "success_rate": 0.675,
+        "min_distance_to_obstacle": 0.07694307714700699,
+        "smoothness": 0.2993561923503876,
+        "path_length": 17.896835327148438,
+        "inference_time_seconds": 0.048931700000139244
+      },
+      "conditional_guided_constant": {
+        "collision_rate": 0.01,
+        "success_rate": 0.99,
+        "min_distance_to_obstacle": 0.6005730628967285,
+        "smoothness": 7.446139335632324,
+        "path_length": 64.32787322998047,
+        "inference_time_seconds": 0.10228159999951458
+      },
+      "conditional_guided_distance_gated": {
+        "collision_rate": 0.025,
+        "success_rate": 0.975,
+        "min_distance_to_obstacle": 0.7611481547355652,
+        "smoothness": 2.319013833999634,
+        "path_length": 37.46674346923828,
+        "inference_time_seconds": 0.11951719999979105
+      }
+    }
+  ]
+}
